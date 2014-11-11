@@ -4,17 +4,22 @@ An HTTP server to expose json-shapeshifter through a RESTful API.
 
 # Try it
 
-### Build from the source
-
 * Checkout out the sources
-* Open the project in Netbeans (yeah, that's the easiest for now)
-* In the `Projects` view, right-click on project and `Custom` --> `Do it, whatever it takes`
-* The project shall be built and the artifact installed in your local repository
-* A `Main` class is executed (and does't do much for now)
+* `cd` to the project folder
+* Run `mvn clean package`
+* Run `java -jar target/json-shapeshifter-server-1.0-SNAPSHOT.jar server config.yml`
+
+A Jetty server is started (listens on port 8080).
+
+You can try it (from browser also can):
+* `curl http://localhost:8080/ping`
+* `curl http://localhost:8080/ping?echo=alsocan`
+
+...and be amazed by the uselessness of this API at this stage.
 
 # Credits
 
-This project relies on the fabulous [Drop Wizard](http://http://dropwizard.io/).
+This project relies on the fabulous [Drop Wizard](http://dropwizard.io/).
 
 # License
 
