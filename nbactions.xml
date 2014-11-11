@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+	<action>
+		<actionName>CUSTOM-clean-compile-run</actionName>
+		<displayName>Do it, whatever it takes</displayName>
+		<goals>
+			<goal>clean</goal>
+			<goal>install</goal>
+			<goal>org.codehaus.mojo:exec-maven-plugin:1.2.1:exec</goal>
+		</goals>
+		<properties>
+			<exec.args>-classpath %classpath la.alsocan.jsonshapeshifterserver.Main</exec.args>
+			<exec.executable>java</exec.executable>
+		</properties>
+	</action>
+	<action>
+		<actionName>CUSTOM-stage</actionName>
+		<displayName>Stage</displayName>
+		<goals>
+			<goal>clean</goal>
+			<goal>deploy</goal>
+		</goals>
+		<activatedProfiles>
+			<activatedProfile>sonatype-oss-release</activatedProfile>
+		</activatedProfiles>
+	</action>
+</actions>

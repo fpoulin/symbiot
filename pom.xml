@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>9</version>
+	</parent>
+	
+	<groupId>la.alsocan</groupId>
+	<artifactId>json-shapeshifter-server</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Json Shapeshifter Server</name>
+	<description>An HTTP server to expose json-shapeshifter through a RESTful API</description>
+	
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Florian Poulin</name>
+			<email>florian.poulin@gmail.com</email>
+			<organizationUrl>https://github.com/fpoulin</organizationUrl>
+		</developer>
+	</developers>
+	
+	<scm>
+		<connection>git@github.com:fpoulin/json-shapeshifter-server.git</connection>
+		<developerConnection>git@github.com:fpoulin/json-shapeshifter-server.git</developerConnection>
+		<url>git@github.com:fpoulin/json-shapeshifter-server.git</url>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.5</version>
+				<extensions>true</extensions>
+				<configuration>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<serverId>ossrh-releases-la.alsocan</serverId>
+					<stagingProfileId>86d7262bca11ea</stagingProfileId>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>la.alsocan</groupId>
+			<artifactId>json-shapeshifter</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-core</artifactId>
+			<version>0.7.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		
+	</dependencies>
+</project>
