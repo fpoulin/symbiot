@@ -21,42 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver;
+package la.alsocan.jsonshapeshifterserver.resources;
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import la.alsocan.jsonshapeshifterserver.health.PingHealthCheck;
-import la.alsocan.jsonshapeshifterserver.resources.PingResource;
-import la.alsocan.jsonshapeshifterserver.resources.SchemaResource;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ServerApplication extends Application<ServerConfiguration> {
+@Path("/schemas")
+public class SchemaResource {
 
-	public static void main(String[] args) throws Exception {
-		new ServerApplication().run(args);
-	}
-
-	@Override
-	public String getName() {
-		return "shapeshifter-server";
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response post(@QueryParam("schema") String schema) {
+		return Response.ok().build();
 	}
 	
-	@Override
-	public void initialize(Bootstrap<ServerConfiguration> btstrp) {
-		// one thing at a time ...
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll() {
+		return Response.ok().build();
 	}
-
-	@Override
-	public void run(ServerConfiguration t, Environment e) throws Exception {
-
-		// health checks
-		e.healthChecks().register("ping", new PingHealthCheck());
-		
-		// resources
-		e.jersey().register(new PingResource(t.getEcho()));
-		e.jersey().register(new SchemaResource());
+	
+	@GET
+	@Path(value = "{schemaId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get(@PathParam("schemaId") String schemaId) {
+		return Response.ok().build();
+	}
+	
+	@PUT
+	@Path(value = "{schemaId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response put(@PathParam("schemaId") String schemaId) {
+		return Response.ok().build();
+	}
+	
+	@DELETE
+	@Path(value = "{schemaId}")
+	public Response delete() {
+		return Response.noContent().build();
 	}
 }
