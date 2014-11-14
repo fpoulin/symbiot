@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>la.alsocan</groupId>
 			<artifactId>json-shapeshifter</artifactId>
-			<version>0.1.0</version>
+			<version>1.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>

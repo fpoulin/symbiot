@@ -23,6 +23,9 @@
  */
 package la.alsocan.jsonshapeshifterserver.resources;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -31,9 +34,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import la.alsocan.jsonshapeshifter.schemas.Schema;
+import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
+import la.alsocan.jsonshapeshifterserver.core.ErrorResponse;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -44,8 +49,37 @@ public class SchemaResource {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response post(@QueryParam("schema") String schema) {
-		return Response.ok().build();
+	public Response post(String schema) {
+		
+		// read node
+		JsonNode node;
+		try {
+			node = new ObjectMapper().readTree(schema);
+		} catch (IOException ex) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponse("Could not read Json tree: " + ex.getMessage()))
+				.build();
+		}
+		
+		// parse schema
+		Schema s;
+		try {
+			s = Schema.buildSchema(node);
+		} catch (UnsupportedJsonSchemaException ex) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponse("Unsupported schema: " + ex.getMessage()))
+				.build();
+		}
+		
+		// store schema
+		// ...
+		
+		return Response
+			.ok()
+			.entity(node)
+			.build();
 	}
 	
 	@GET
