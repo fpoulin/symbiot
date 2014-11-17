@@ -42,10 +42,13 @@ public interface SchemaDao {
 			  "CREATE TABLE " + SCHEMA_TABLE_NAME + "("
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "creationDate TIMESTAMP NOT NULL, "
+			  + "lastModificationDate TIMESTAMP NOT NULL, "
 			  + "schemaStr CLOB(5000) NOT NULL, "
 			  + "CONSTRAINT schemas_key PRIMARY KEY (id))";
 	
-	@SqlUpdate("INSERT INTO " + SCHEMA_TABLE_NAME + " (creationDate, schemaStr) VALUES (CURRENT_TIMESTAMP, :schemaStr)")
+	@SqlUpdate("INSERT INTO " + SCHEMA_TABLE_NAME
+			  + " (creationDate, lastModificationDate, schemaStr)"
+			  + " VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :schemaStr)")
 	@GetGeneratedKeys
 	int insert(@Bind("schemaStr") final String schemaStr);
 	
@@ -55,7 +58,9 @@ public interface SchemaDao {
 	@SqlQuery("SELECT * FROM " + SCHEMA_TABLE_NAME + " WHERE id = :id")
 	SchemaTo findById(@Bind("id") int id);
 	
-	@SqlUpdate("UPDATE " + SCHEMA_TABLE_NAME + " SET schemaStr = :schemaStr WHERE id = :id")
+	@SqlUpdate("UPDATE " + SCHEMA_TABLE_NAME
+			  + " SET lastModificationDate = CURRENT_TIMESTAMP, schemaStr = :schemaStr"
+			  + " WHERE id = :id")
 	void update(@Bind("id") int id, @Bind("schemaStr") String schemaStr);
 	
 	@SqlUpdate("DELETE FROM " + SCHEMA_TABLE_NAME + " WHERE id = :id")

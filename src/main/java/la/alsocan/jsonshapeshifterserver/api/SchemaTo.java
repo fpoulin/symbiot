@@ -39,14 +39,18 @@ public class SchemaTo {
 	private DateTime creationDate;
 	
 	@JsonProperty
+	private DateTime lastModificationDate;
+	
+	@JsonProperty
 	private JsonNode schemaNode;
 
 	public SchemaTo() {
 	}
 
-	public SchemaTo(int id, DateTime creationDate, JsonNode schemaNode) {
+	public SchemaTo(int id, DateTime creationDate, DateTime lastModificationDate, JsonNode schemaNode) {
 		this.id = id;
 		this.creationDate = creationDate;
+		this.lastModificationDate = lastModificationDate;
 		this.schemaNode = schemaNode;
 	}
 	
@@ -64,6 +68,14 @@ public class SchemaTo {
 
 	public void setCreationDate(DateTime creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public DateTime getLastModificationDate() {
+		return lastModificationDate;
+	}
+
+	public void setLastModificationDate(DateTime lastModificationDate) {
+		this.lastModificationDate = lastModificationDate;
 	}
 
 	public JsonNode getSchemaNode() {

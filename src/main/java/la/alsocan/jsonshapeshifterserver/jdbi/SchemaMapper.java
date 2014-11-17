@@ -44,7 +44,8 @@ public class SchemaMapper implements ResultSetMapper<SchemaTo> {
 	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		
 		// parse date
-		DateTime dt = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
+		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
+		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
 		
 		// parse schema node
 		ObjectMapper om = new ObjectMapper();
@@ -56,6 +57,6 @@ public class SchemaMapper implements ResultSetMapper<SchemaTo> {
 		}
 		
 		// build to
-		return new SchemaTo(r.getInt("id"), dt, node);
+		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
 	}
 }
