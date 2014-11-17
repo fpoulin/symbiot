@@ -7,6 +7,7 @@ An HTTP server to expose json-shapeshifter through a RESTful API.
 * Checkout out the sources
 * `cd` to the project folder
 * Run `mvn clean package`
+* Run `java -jar target/json-shapeshifter-server-1.0-SNAPSHOT.jar drop-and-create-db config.yml`
 * Run `java -jar target/json-shapeshifter-server-1.0-SNAPSHOT.jar server config.yml`
 
 A Jetty server is started (listens on port 8080).
