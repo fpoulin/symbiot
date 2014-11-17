@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.core;
+package la.alsocan.jsonshapeshifterserver.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

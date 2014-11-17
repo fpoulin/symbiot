@@ -21,29 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.core;
+package la.alsocan.jsonshapeshifterserver.jdbi;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 /**
+ *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class Ping {
-	
-	@JsonProperty
-	private String echo;
+public class SchemaMapper implements ResultSetMapper<SchemaTo> {
 
-	public Ping() {}
-	
-	public Ping(String echo) {
-		this.echo = echo;
-	}
-
-	public String getEcho() {
-		return echo;
-	}
-
-	public void setEcho(String echo) {
-		this.echo = echo;
+	@Override
+	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+		
+		// parse date
+		DateTime dt = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
+		
+		// parse schema node
+		ObjectMapper om = new ObjectMapper();
+		JsonNode node;
+		try {
+			node = om.readTree(r.getString("schemaStr"));
+		} catch (IOException ex) {
+			return null;
+		}
+		
+		// build to
+		return new SchemaTo(r.getInt("id"), dt, node);
 	}
 }

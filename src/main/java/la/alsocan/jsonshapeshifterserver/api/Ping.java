@@ -21,31 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver;
+package la.alsocan.jsonshapeshifterserver.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.Configuration;
-import io.dropwizard.db.DataSourceFactory;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ServerConfiguration extends Configuration {
+public class Ping {
 	
 	@JsonProperty
 	private String echo;
-	
-	@Valid
-	@NotNull
-	@JsonProperty
-	private final DataSourceFactory database = new DataSourceFactory();
 
-	public DataSourceFactory getDataSourceFactory() {
-		return database;
-	}
+	public Ping() {}
 	
+	public Ping(String echo) {
+		this.echo = echo;
+	}
+
 	public String getEcho() {
 		return echo;
 	}

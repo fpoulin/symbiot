@@ -1,1 +1,16 @@
 echo: ok lah
+
+database:
+  driverClass: org.apache.derby.jdbc.EmbeddedDriver
+  user: shapeshifter
+  password: sh4p3sh1ft3r
+  url: jdbc:derby:derbyDB
+  properties:
+    charSet: UTF-8
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ values 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  evictionInterval: 10s
+  minIdleTime: 1 minute

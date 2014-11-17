@@ -21,36 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver;
+package la.alsocan.jsonshapeshifterserver.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.Configuration;
-import io.dropwizard.db.DataSourceFactory;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.joda.time.DateTime;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ServerConfiguration extends Configuration {
+public class SchemaTo {
+
+	@JsonProperty
+	private int id;
 	
 	@JsonProperty
-	private String echo;
+	private DateTime creationDate;
 	
-	@Valid
-	@NotNull
 	@JsonProperty
-	private final DataSourceFactory database = new DataSourceFactory();
+	private JsonNode schemaNode;
 
-	public DataSourceFactory getDataSourceFactory() {
-		return database;
+	public SchemaTo() {
+	}
+
+	public SchemaTo(int id, DateTime creationDate, JsonNode schemaNode) {
+		this.id = id;
+		this.creationDate = creationDate;
+		this.schemaNode = schemaNode;
 	}
 	
-	public String getEcho() {
-		return echo;
+	public int getId() {
+		return id;
 	}
 
-	public void setEcho(String echo) {
-		this.echo = echo;
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public DateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(DateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public JsonNode getSchemaNode() {
+		return schemaNode;
+	}
+
+	public void setSchemaNode(JsonNode schemaNode) {
+		this.schemaNode = schemaNode;
 	}
 }

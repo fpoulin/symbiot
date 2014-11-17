@@ -23,12 +23,17 @@
  */
 package la.alsocan.jsonshapeshifterserver;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.dropwizard.Application;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import la.alsocan.jsonshapeshifterserver.cli.DropCreateDatabaseCommand;
 import la.alsocan.jsonshapeshifterserver.health.PingHealthCheck;
+import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.resources.PingResource;
 import la.alsocan.jsonshapeshifterserver.resources.SchemaResource;
+import org.skife.jdbi.v2.DBI;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -45,18 +50,25 @@ public class ServerApplication extends Application<ServerConfiguration> {
 	}
 	
 	@Override
-	public void initialize(Bootstrap<ServerConfiguration> btstrp) {
-		// one thing at a time ...
+	public void initialize(Bootstrap<ServerConfiguration> bootstrap) {
+		bootstrap.addCommand(new DropCreateDatabaseCommand("drop-and-create-db"));
 	}
 
 	@Override
-	public void run(ServerConfiguration t, Environment e) throws Exception {
+	public void run(ServerConfiguration conf, Environment env) throws ClassNotFoundException {
 
+		final DBIFactory factory = new DBIFactory();
+		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
+		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
+		
 		// health checks
-		e.healthChecks().register("ping", new PingHealthCheck());
+		env.healthChecks().register("ping", new PingHealthCheck());
+		
+		// configure object mapper
+		env.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		
 		// resources
-		e.jersey().register(new PingResource(t.getEcho()));
-		e.jersey().register(new SchemaResource());
+		env.jersey().register(new PingResource(conf.getEcho()));
+		env.jersey().register(new SchemaResource(schemaDao));
 	}
 }

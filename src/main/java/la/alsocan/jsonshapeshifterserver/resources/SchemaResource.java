@@ -38,7 +38,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
-import la.alsocan.jsonshapeshifterserver.core.ErrorResponse;
+import la.alsocan.jsonshapeshifterserver.api.ErrorResponse;
+import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
+import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -46,66 +48,106 @@ import la.alsocan.jsonshapeshifterserver.core.ErrorResponse;
 @Path("/schemas")
 public class SchemaResource {
 
+	private final SchemaDao schemaDao;
+
+	public SchemaResource(SchemaDao schemaDao) {
+		this.schemaDao = schemaDao;
+	}
+		
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
 	public Response post(String schema) {
 		
 		// read node
+		ObjectMapper om = new ObjectMapper();
 		JsonNode node;
 		try {
-			node = new ObjectMapper().readTree(schema);
+			node = om.readTree(schema);
 		} catch (IOException ex) {
-			return Response
-				.status(422)
+			return Response.status(422)
 				.entity(new ErrorResponse("Could not read Json tree: " + ex.getMessage()))
 				.build();
 		}
 		
 		// parse schema
-		Schema s;
 		try {
-			s = Schema.buildSchema(node);
+			Schema.buildSchema(node);
 		} catch (UnsupportedJsonSchemaException ex) {
-			return Response
-				.status(422)
+			return Response.status(422)
 				.entity(new ErrorResponse("Unsupported schema: " + ex.getMessage()))
 				.build();
 		}
 		
 		// store schema
-		// ...
-		
-		return Response
-			.ok()
-			.entity(node)
-			.build();
+		schemaDao.insert(node.toString());
+		return Response.created(null).build();
 	}
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() {
-		return Response.ok().build();
+		return Response.ok(schemaDao.findAll()).build();
 	}
 	
 	@GET
 	@Path(value = "{schemaId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response get(@PathParam("schemaId") String schemaId) {
-		return Response.ok().build();
+	public Response get(@PathParam("schemaId") int schemaId) {
+		
+		SchemaTo schemaTo = schemaDao.findById(schemaId);
+		if (schemaTo == null) {
+			return Response.status(404)	.build();
+		}
+		
+		return Response.ok(schemaTo).build();
 	}
 	
 	@PUT
 	@Path(value = "{schemaId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response put(@PathParam("schemaId") String schemaId) {
-		return Response.ok().build();
+	public Response put(@PathParam("schemaId") int schemaId, String schema) {
+		
+		SchemaTo schemaTo = schemaDao.findById(schemaId);
+		if (schemaTo == null) {
+			return Response.status(404)	.build();
+		}
+		
+		// read node
+		ObjectMapper om = new ObjectMapper();
+		JsonNode node;
+		try {
+			node = om.readTree(schema);
+		} catch (IOException ex) {
+			return Response.status(422)
+				.entity(new ErrorResponse("Could not read Json tree: " + ex.getMessage()))
+				.build();
+		}
+		
+		// parse schema
+		try {
+			Schema.buildSchema(node);
+		} catch (UnsupportedJsonSchemaException ex) {
+			return Response.status(422)
+				.entity(new ErrorResponse("Unsupported schema: " + ex.getMessage()))
+				.build();
+		}
+		
+		// store updated schema
+		schemaDao.update(schemaId, node.toString());
+		return Response.noContent().build();
 	}
 	
 	@DELETE
 	@Path(value = "{schemaId}")
-	public Response delete() {
+	public Response delete(@PathParam("schemaId") int schemaId) {
+		
+		SchemaTo schemaTo = schemaDao.findById(schemaId);
+		if (schemaTo == null) {
+			return Response.status(404)	.build();
+		}
+		
+		schemaDao.delete(schemaId);
 		return Response.noContent().build();
 	}
 }
