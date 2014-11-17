@@ -26,6 +26,7 @@ package la.alsocan.jsonshapeshifterserver.jdbi;
 import java.util.List;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -45,7 +46,8 @@ public interface SchemaDao {
 			  + "CONSTRAINT primary_key PRIMARY KEY (id))";
 	
 	@SqlUpdate("INSERT INTO " + SCHEMA_TABLE_NAME + " (creationDate, schemaStr) VALUES (CURRENT_TIMESTAMP, :schemaStr)")
-	void insert(@Bind("schemaStr") final String schemaStr);
+	@GetGeneratedKeys
+	int insert(@Bind("schemaStr") final String schemaStr);
 	
 	@SqlQuery("SELECT * FROM " + SCHEMA_TABLE_NAME)
 	List<SchemaTo> findAll();

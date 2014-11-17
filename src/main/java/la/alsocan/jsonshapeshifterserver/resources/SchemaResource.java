@@ -26,6 +26,7 @@ package la.alsocan.jsonshapeshifterserver.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URI;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -34,8 +35,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
 import la.alsocan.jsonshapeshifterserver.api.ErrorResponse;
@@ -56,7 +59,7 @@ public class SchemaResource {
 		
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response post(String schema) {
+	public Response post(@Context UriInfo info, String schema) {
 		
 		// read node
 		ObjectMapper om = new ObjectMapper();
@@ -79,8 +82,14 @@ public class SchemaResource {
 		}
 		
 		// store schema
-		schemaDao.insert(node.toString());
-		return Response.created(null).build();
+		int id = schemaDao.insert(node.toString());
+		
+		// build response
+		URI absoluteUri = info.getBaseUriBuilder()
+				  .path(this.getClass())
+				  .path(this.getClass(), "get")
+				  .build(id);
+		return Response.created(absoluteUri).build();
 	}
 	
 	@GET
