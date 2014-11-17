@@ -31,6 +31,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import la.alsocan.jsonshapeshifterserver.ServerConfiguration;
 import static la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao.SCHEMA_DDL;
+import static la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao.TRANSFORMATION_DDL;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
 
@@ -65,12 +66,12 @@ public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfigura
 		
 		// create new database (with DDL)
 		DriverManager.registerDriver((Driver)Class.forName(EXPECTED_DRIVER).newInstance());
-		try (Connection c = DriverManager.getConnection(
-			EXPECTED_URL + ";create=true;user=" 
-			+ configuration.getDataSourceFactory().getUser() + ";password=" 
-			+ configuration.getDataSourceFactory().getPassword())) {
+		try (Connection c = DriverManager.getConnection(EXPECTED_URL
+			+ ";create=true;user=" + configuration.getDataSourceFactory().getUser()
+			+ ";password=" + configuration.getDataSourceFactory().getPassword())) {
 			
 			c.createStatement().executeUpdate(SCHEMA_DDL);
+			c.createStatement().executeUpdate(TRANSFORMATION_DDL);
 		}
 	}
 }

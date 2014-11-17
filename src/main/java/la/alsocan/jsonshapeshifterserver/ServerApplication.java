@@ -31,8 +31,10 @@ import io.dropwizard.setup.Environment;
 import la.alsocan.jsonshapeshifterserver.cli.DropCreateDatabaseCommand;
 import la.alsocan.jsonshapeshifterserver.health.PingHealthCheck;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
+import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 import la.alsocan.jsonshapeshifterserver.resources.PingResource;
 import la.alsocan.jsonshapeshifterserver.resources.SchemaResource;
+import la.alsocan.jsonshapeshifterserver.resources.TransformationResource;
 import org.skife.jdbi.v2.DBI;
 
 /**
@@ -60,6 +62,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
 		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
+		final TransformationDao transformationDao = jdbi.onDemand(TransformationDao.class);
 		
 		// health checks
 		env.healthChecks().register("ping", new PingHealthCheck());
@@ -70,5 +73,6 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		// resources
 		env.jersey().register(new PingResource(conf.getEcho()));
 		env.jersey().register(new SchemaResource(schemaDao));
+		env.jersey().register(new TransformationResource(transformationDao));
 	}
 }

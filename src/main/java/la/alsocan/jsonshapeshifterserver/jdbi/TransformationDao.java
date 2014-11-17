@@ -24,7 +24,7 @@
 package la.alsocan.jsonshapeshifterserver.jdbi;
 
 import java.util.List;
-import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
+import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -34,30 +34,30 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@RegisterMapper(SchemaMapper.class)
-public interface SchemaDao {
+@RegisterMapper(TransformationMapper.class)
+public interface TransformationDao {
 	
-	static final String SCHEMA_TABLE_NAME = "schemas";
-	static final String SCHEMA_DDL = 
-			  "CREATE TABLE " + SCHEMA_TABLE_NAME + "("
+	static final String TRANSFORMATION_TABLE_NAME = "transformations";
+	static final String TRANSFORMATION_DDL = 
+			  "CREATE TABLE " + TRANSFORMATION_TABLE_NAME + "("
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "creationDate TIMESTAMP NOT NULL, "
-			  + "schemaStr CLOB(5000) NOT NULL, "
-			  + "CONSTRAINT schemas_key PRIMARY KEY (id))";
+			  + "lastModificationDate TIMESTAMP NOT NULL, "
+			  + "CONSTRAINT transformations_key PRIMARY KEY (id))";
 	
-	@SqlUpdate("INSERT INTO " + SCHEMA_TABLE_NAME + " (creationDate, schemaStr) VALUES (CURRENT_TIMESTAMP, :schemaStr)")
+	@SqlUpdate("INSERT INTO " + TRANSFORMATION_TABLE_NAME + " (creationDate, lastModificationDate) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
 	@GetGeneratedKeys
-	int insert(@Bind("schemaStr") final String schemaStr);
+	int insert();
 	
-	@SqlQuery("SELECT * FROM " + SCHEMA_TABLE_NAME)
-	List<SchemaTo> findAll();
+	@SqlQuery("SELECT * FROM " + TRANSFORMATION_TABLE_NAME)
+	List<TransformationTo> findAll();
 	
-	@SqlQuery("SELECT * FROM " + SCHEMA_TABLE_NAME + " WHERE id = :id")
-	SchemaTo findById(@Bind("id") int id);
+	@SqlQuery("SELECT * FROM " + TRANSFORMATION_TABLE_NAME + " WHERE id = :id")
+	TransformationTo findById(@Bind("id") int id);
 	
-	@SqlUpdate("UPDATE " + SCHEMA_TABLE_NAME + " SET schemaStr = :schemaStr WHERE id = :id")
-	void update(@Bind("id") int id, @Bind("schemaStr") String schemaStr);
+	@SqlUpdate("UPDATE " + TRANSFORMATION_TABLE_NAME + " SET lastModificationDate = CURRENT_TIMESTAMP WHERE id = :id")
+	void update(@Bind("id") int id);
 	
-	@SqlUpdate("DELETE FROM " + SCHEMA_TABLE_NAME + " WHERE id = :id")
+	@SqlUpdate("DELETE FROM " + TRANSFORMATION_TABLE_NAME + " WHERE id = :id")
 	void delete(@Bind("id") int id);
 }
