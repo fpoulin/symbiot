@@ -44,6 +44,7 @@ import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.EmptyBindingTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
@@ -65,17 +66,17 @@ public class TransformationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(@Context UriInfo info, TransformationTo to) {
 		
+		// FIXME do some validations here
+		// ..
+		
 		// store transformation
 		int id = transformationDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId());
 		
-		// do some validations here
-		// ..
-		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
-				  .path(this.getClass())
-				  .path(this.getClass(), "get")
-				  .build(id);
+			.path(this.getClass())
+			.path(this.getClass(), "get")
+			.build(id);
 		return Response.created(absoluteUri).build();
 	}
 	
@@ -127,7 +128,9 @@ public class TransformationResource {
 		Iterator<SchemaNode> it = t.toBind();
 		while(it.hasNext()) {
 			SchemaNode node = it.next();
-			to.addRemainingBinding(new BindingTo(node.getSchemaPointer(), "NULL"));
+			BindingTo bindingTo = new EmptyBindingTo();
+			bindingTo.setTargetNode(node.getSchemaPointer());
+			to.addRemainingBinding(bindingTo);
 		}
 		
 		// resolve hateoas links

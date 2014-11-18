@@ -21,44 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.api;
+package la.alsocan.jsonshapeshifterserver.resources;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.EmptyBindingTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@Type(value = EmptyBindingTo.class, name = "empty"),
-	@Type(value = StringConstantBindingTo.class, name = "stringConstant"),
-	@Type(value = StringNodeBindingTo.class, name = "stringNode")})
-public abstract class BindingTo {
+@Path("/transformations/{transformationId}/bindings")
+public class BindingResource {
 	
-	@JsonProperty
-	private String targetNode;
-
-	public BindingTo() {
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response post(@Context UriInfo info, BindingTo to) {
+		return Response.ok(to).build();
 	}
 	
-	public BindingTo(String targetNode, String type) {
-		this.targetNode = targetNode;
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll(@Context UriInfo info) {
+		return Response.serverError().build(); // not supported yet
 	}
 	
-	public String getTargetNode() {
-		return targetNode;
+	@GET
+	@Path(value = "{bindingId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get(@Context UriInfo info, @PathParam("bindingId") int bindingId) {
+		return Response.serverError().build(); // not supported yet
 	}
-
-	public void setTargetNode(String targetNode) {
-		this.targetNode = targetNode;
+	
+	@DELETE
+	@Path(value = "{bindingId}")
+	public Response delete(@PathParam("bindingId") int bindingId) {
+		return Response.serverError().build(); // not supported yet
 	}
 }

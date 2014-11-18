@@ -21,44 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.api;
+package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.EmptyBindingTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.*;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@Type(value = EmptyBindingTo.class, name = "empty"),
-	@Type(value = StringConstantBindingTo.class, name = "stringConstant"),
-	@Type(value = StringNodeBindingTo.class, name = "stringNode")})
-public abstract class BindingTo {
-	
+public class StringConstantBindingTo extends BindingTo {
+
 	@JsonProperty
-	private String targetNode;
+	private String constant;
 
-	public BindingTo() {
-	}
-	
-	public BindingTo(String targetNode, String type) {
-		this.targetNode = targetNode;
-	}
-	
-	public String getTargetNode() {
-		return targetNode;
+	public String getConstant() {
+		return constant;
 	}
 
-	public void setTargetNode(String targetNode) {
-		this.targetNode = targetNode;
+	public void setConstant(String constant) {
+		this.constant = constant;
 	}
 }

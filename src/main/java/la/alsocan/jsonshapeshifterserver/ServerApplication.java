@@ -32,6 +32,7 @@ import la.alsocan.jsonshapeshifterserver.cli.DropCreateDatabaseCommand;
 import la.alsocan.jsonshapeshifterserver.health.PingHealthCheck;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
+import la.alsocan.jsonshapeshifterserver.resources.BindingResource;
 import la.alsocan.jsonshapeshifterserver.resources.PingResource;
 import la.alsocan.jsonshapeshifterserver.resources.SchemaResource;
 import la.alsocan.jsonshapeshifterserver.resources.TransformationResource;
@@ -59,20 +60,22 @@ public class ServerApplication extends Application<ServerConfiguration> {
 	@Override
 	public void run(ServerConfiguration conf, Environment env) throws ClassNotFoundException {
 
+		// health checks
+		env.healthChecks().register("ping", new PingHealthCheck());
+		
+		// init JDBI
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
 		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
 		final TransformationDao transformationDao = jdbi.onDemand(TransformationDao.class);
 		
-		// health checks
-		env.healthChecks().register("ping", new PingHealthCheck());
-		
 		// configure object mapper
 		env.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		
-		// resources
+		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
 		env.jersey().register(new SchemaResource(schemaDao));
 		env.jersey().register(new TransformationResource(transformationDao, schemaDao));
+		env.jersey().register(new BindingResource());
 	}
 }
