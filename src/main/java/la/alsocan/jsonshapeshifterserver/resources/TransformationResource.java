@@ -24,13 +24,12 @@
 package la.alsocan.jsonshapeshifterserver.resources;
 
 import java.net.URI;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,8 +37,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.schemas.Schema;
+import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
+import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 import la.alsocan.jsonshapeshifterserver.api.Link;
+import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
+import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
 /**
@@ -49,9 +54,11 @@ import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 public class TransformationResource {
 	
 	private final TransformationDao transformationDao;
+	private final SchemaDao schemaDao;
 
-	public TransformationResource(TransformationDao transformationDao) {
+	public TransformationResource(TransformationDao transformationDao, SchemaDao schemaDao) {
 		this.transformationDao = transformationDao;
+		this.schemaDao = schemaDao;
 	}
 	
 	@POST
@@ -77,23 +84,9 @@ public class TransformationResource {
 	public Response getAll(@Context UriInfo info) {
 		
 		List<TransformationTo> tos = transformationDao.findAll();
-		
-		// resolve hateoas links
-		for (TransformationTo to : tos) {
-			to.addLink(new Link("sourceSchema",
-				info.getBaseUriBuilder()
-				.path(SchemaResource.class)
-				.path(SchemaResource.class, "get")
-				.build(to.getSourceSchemaId())
-				.toString()));
-			to.addLink(new Link("targetSchema",
-				info.getBaseUriBuilder()
-				.path(SchemaResource.class)
-				.path(SchemaResource.class, "get")
-				.build(to.getTargetSchemaId())
-				.toString()));
-		}
-		
+		tos.stream().forEach((to) -> {
+			resolveTo(info, to);
+		});
 		return Response.ok(tos).build();
 	}
 	
@@ -106,23 +99,7 @@ public class TransformationResource {
 		if (transformationTo == null) {
 			return Response.status(404)	.build();
 		}
-		
-		// resolve hateoas links
-		transformationTo
-			.addLink(new Link("sourceSchema",
-				info.getBaseUriBuilder()
-				.path(SchemaResource.class)
-				.path(SchemaResource.class, "get")
-				.build(transformationTo.getSourceSchemaId())
-				.toString()))
-			.addLink(new Link("targetSchema",
-				info.getBaseUriBuilder()
-				.path(SchemaResource.class)
-				.path(SchemaResource.class, "get")
-				.build(transformationTo.getTargetSchemaId())
-				.toString()));
-		
-		return Response.ok(transformationTo).build();
+		return Response.ok(resolveTo(info, transformationTo)).build();
 	}
 	
 	@DELETE
@@ -136,5 +113,37 @@ public class TransformationResource {
 		
 		transformationDao.delete(transformationId);
 		return Response.noContent().build();
+	}
+	
+	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
+	
+		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
+		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
+		
+		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
+		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
+		
+		Transformation t = new Transformation(sourceSchema, targetchema);
+		Iterator<SchemaNode> it = t.toBind();
+		while(it.hasNext()) {
+			SchemaNode node = it.next();
+			to.addRemainingBinding(new BindingTo(node.getSchemaPointer(), "NULL"));
+		}
+		
+		// resolve hateoas links
+		to.addLink(new Link("sourceSchema",
+			info.getBaseUriBuilder()
+			.path(SchemaResource.class)
+			.path(SchemaResource.class, "get")
+			.build(to.getSourceSchemaId())
+			.toString()))
+		.addLink(new Link("targetSchema",
+			info.getBaseUriBuilder()
+			.path(SchemaResource.class)
+			.path(SchemaResource.class, "get")
+			.build(to.getTargetSchemaId())
+			.toString()));
+		
+		return to;
 	}
 }

@@ -49,10 +49,18 @@ public class TransformationTo {
 	private int targetSchemaId;
 	
 	@JsonProperty
+	private List<BindingTo> existingBindings;
+	
+	@JsonProperty
+	private List<BindingTo> remainingBindings;
+	
+	@JsonProperty
 	private List<Link> links;
 	
 	public TransformationTo() {
 		this.links = new LinkedList<>();
+		this.existingBindings = new LinkedList<>();
+		this.remainingBindings = new LinkedList<>();
 	}
 
 	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId) {
@@ -66,6 +74,16 @@ public class TransformationTo {
 	
 	public TransformationTo addLink(Link link) {
 		this.links.add(link);
+		return this;
+	}
+	
+	public TransformationTo addExistingBinding(BindingTo binding) {
+		this.existingBindings.add(binding);
+		return this;
+	}
+	
+	public TransformationTo addRemainingBinding(BindingTo binding) {
+		this.remainingBindings.add(binding);
 		return this;
 	}
 	

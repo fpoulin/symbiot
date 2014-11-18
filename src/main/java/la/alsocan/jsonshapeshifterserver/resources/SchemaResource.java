@@ -122,6 +122,9 @@ public class SchemaResource {
 			return Response.status(404)	.build();
 		}
 		
+		// FIXME if schema is used, it should not be updated
+		// ...
+		
 		// read node
 		ObjectMapper om = new ObjectMapper();
 		JsonNode node;
