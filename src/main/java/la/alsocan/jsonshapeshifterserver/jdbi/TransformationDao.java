@@ -62,11 +62,6 @@ public interface TransformationDao {
 			  + " WHERE id = :id")
 	TransformationTo findById(@Bind("id") int id);
 	
-	@SqlUpdate("UPDATE " + TRANSFORMATION_TABLE_NAME 
-			  + " SET lastModificationDate = CURRENT_TIMESTAMP "
-			  + "WHERE id = :id")
-	void update(@Bind("id") int id);
-	
 	@SqlUpdate("DELETE FROM " + TRANSFORMATION_TABLE_NAME 
 			  + " WHERE id = :id")
 	void delete(@Bind("id") int id);

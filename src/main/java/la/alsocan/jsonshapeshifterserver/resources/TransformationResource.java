@@ -125,22 +125,6 @@ public class TransformationResource {
 		return Response.ok(transformationTo).build();
 	}
 	
-	@PUT
-	@Path(value = "{transformationId}")
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response put(@PathParam("transformationId") int transformationId) {
-		
-		TransformationTo transformationTo = transformationDao.findById(transformationId);
-		if (transformationTo == null) {
-			return Response.status(404)	.build();
-		}
-		
-		// store updated transformation
-		transformationDao.update(transformationId);
-		return Response.noContent().build();
-	}
-	
 	@DELETE
 	@Path(value = "{transformationId}")
 	public Response delete(@PathParam("transformationId") int transformationId) {
