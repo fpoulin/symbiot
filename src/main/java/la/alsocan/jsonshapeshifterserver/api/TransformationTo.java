@@ -24,6 +24,8 @@
 package la.alsocan.jsonshapeshifterserver.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.LinkedList;
+import java.util.List;
 import org.joda.time.DateTime;
 
 /**
@@ -46,15 +48,25 @@ public class TransformationTo {
 	@JsonProperty
 	private int targetSchemaId;
 	
+	@JsonProperty
+	private List<Link> links;
+	
 	public TransformationTo() {
+		this.links = new LinkedList<>();
 	}
 
 	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId) {
+		this();
 		this.id = id;
 		this.creationDate = creationDate;
 		this.lastModificationDate = lastModificationDate;
 		this.sourceSchemaId = sourceSchemaId;
 		this.targetSchemaId = targetSchemaId;
+	}
+	
+	public TransformationTo addLink(Link link) {
+		this.links.add(link);
+		return this;
 	}
 	
 	public int getId() {

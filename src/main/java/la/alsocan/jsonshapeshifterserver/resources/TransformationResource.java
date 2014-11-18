@@ -24,6 +24,8 @@
 package la.alsocan.jsonshapeshifterserver.resources;
 
 import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,6 +38,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
@@ -71,19 +74,53 @@ public class TransformationResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll() {
-		return Response.ok(transformationDao.findAll()).build();
+	public Response getAll(@Context UriInfo info) {
+		
+		List<TransformationTo> tos = transformationDao.findAll();
+		
+		// resolve hateoas links
+		for (TransformationTo to : tos) {
+			to.addLink(new Link("sourceSchema",
+				info.getBaseUriBuilder()
+				.path(SchemaResource.class)
+				.path(SchemaResource.class, "get")
+				.build(to.getSourceSchemaId())
+				.toString()));
+			to.addLink(new Link("targetSchema",
+				info.getBaseUriBuilder()
+				.path(SchemaResource.class)
+				.path(SchemaResource.class, "get")
+				.build(to.getTargetSchemaId())
+				.toString()));
+		}
+		
+		return Response.ok(tos).build();
 	}
 	
 	@GET
 	@Path(value = "{transformationId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response get(@PathParam("transformationId") int transformationId) {
+	public Response get(@Context UriInfo info, @PathParam("transformationId") int transformationId) {
 		
 		TransformationTo transformationTo = transformationDao.findById(transformationId);
 		if (transformationTo == null) {
 			return Response.status(404)	.build();
 		}
+		
+		// resolve hateoas links
+		transformationTo
+			.addLink(new Link("sourceSchema",
+				info.getBaseUriBuilder()
+				.path(SchemaResource.class)
+				.path(SchemaResource.class, "get")
+				.build(transformationTo.getSourceSchemaId())
+				.toString()))
+			.addLink(new Link("targetSchema",
+				info.getBaseUriBuilder()
+				.path(SchemaResource.class)
+				.path(SchemaResource.class, "get")
+				.build(transformationTo.getTargetSchemaId())
+				.toString()));
 		
 		return Response.ok(transformationTo).build();
 	}
