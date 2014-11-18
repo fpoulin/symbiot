@@ -43,21 +43,31 @@ public interface TransformationDao {
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "creationDate TIMESTAMP NOT NULL, "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
-			  + "CONSTRAINT transformations_key PRIMARY KEY (id))";
+			  + "sourceSchemaId INTEGER NOT NULL, "
+			  + "targetSchemaId INTEGER NOT NULL, "
+			  + "CONSTRAINT transformations_key PRIMARY KEY (id),"
+			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.SCHEMA_TABLE_NAME+" (id),"
+			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.SCHEMA_TABLE_NAME+" (id))";
 	
-	@SqlUpdate("INSERT INTO " + TRANSFORMATION_TABLE_NAME + " (creationDate, lastModificationDate) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)")
+	@SqlUpdate("INSERT INTO " + TRANSFORMATION_TABLE_NAME
+			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId) "
+			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :sourceSchemaId, :targetSchemaId)")
 	@GetGeneratedKeys
-	int insert();
+	int insert(@Bind("sourceSchemaId") int sourceSchemaId, @Bind("targetSchemaId") int targetSchemaId);
 	
 	@SqlQuery("SELECT * FROM " + TRANSFORMATION_TABLE_NAME)
 	List<TransformationTo> findAll();
 	
-	@SqlQuery("SELECT * FROM " + TRANSFORMATION_TABLE_NAME + " WHERE id = :id")
+	@SqlQuery("SELECT * FROM " + TRANSFORMATION_TABLE_NAME 
+			  + " WHERE id = :id")
 	TransformationTo findById(@Bind("id") int id);
 	
-	@SqlUpdate("UPDATE " + TRANSFORMATION_TABLE_NAME + " SET lastModificationDate = CURRENT_TIMESTAMP WHERE id = :id")
+	@SqlUpdate("UPDATE " + TRANSFORMATION_TABLE_NAME 
+			  + " SET lastModificationDate = CURRENT_TIMESTAMP "
+			  + "WHERE id = :id")
 	void update(@Bind("id") int id);
 	
-	@SqlUpdate("DELETE FROM " + TRANSFORMATION_TABLE_NAME + " WHERE id = :id")
+	@SqlUpdate("DELETE FROM " + TRANSFORMATION_TABLE_NAME 
+			  + " WHERE id = :id")
 	void delete(@Bind("id") int id);
 }

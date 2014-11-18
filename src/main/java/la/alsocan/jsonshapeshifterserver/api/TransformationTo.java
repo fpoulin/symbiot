@@ -40,13 +40,21 @@ public class TransformationTo {
 	@JsonProperty
 	private DateTime lastModificationDate;
 	
+	@JsonProperty
+	private int sourceSchemaId;
+	
+	@JsonProperty
+	private int targetSchemaId;
+	
 	public TransformationTo() {
 	}
 
-	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate) {
+	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId) {
 		this.id = id;
 		this.creationDate = creationDate;
 		this.lastModificationDate = lastModificationDate;
+		this.sourceSchemaId = sourceSchemaId;
+		this.targetSchemaId = targetSchemaId;
 	}
 	
 	public int getId() {
@@ -71,5 +79,21 @@ public class TransformationTo {
 
 	public void setLastModificationDate(DateTime lastModificationDate) {
 		this.lastModificationDate = lastModificationDate;
+	}
+
+	public int getSourceSchemaId() {
+		return sourceSchemaId;
+	}
+
+	public void setSourceSchemaId(int sourceSchemaId) {
+		this.sourceSchemaId = sourceSchemaId;
+	}
+
+	public int getTargetSchemaId() {
+		return targetSchemaId;
+	}
+
+	public void setTargetSchemaId(int targetSchemaId) {
+		this.targetSchemaId = targetSchemaId;
 	}
 }

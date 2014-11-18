@@ -44,6 +44,9 @@ public class TransformationMapper implements ResultSetMapper<TransformationTo> {
 		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
 		
 		// build to
-		return new TransformationTo(r.getInt("id"), dtc, dtm);
+		return new TransformationTo(
+				  r.getInt("id"), dtc, dtm, 
+				  r.getInt("sourceSchemaId"), 
+				  r.getInt("targetSchemaId"));
 	}
 }

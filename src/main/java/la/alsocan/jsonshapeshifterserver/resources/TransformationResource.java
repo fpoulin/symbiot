@@ -53,10 +53,13 @@ public class TransformationResource {
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response post(@Context UriInfo info) {
+	public Response post(@Context UriInfo info, TransformationTo to) {
 		
 		// store transformation
-		int id = transformationDao.insert();
+		int id = transformationDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId());
+		
+		// do some validations here
+		// ..
 		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
