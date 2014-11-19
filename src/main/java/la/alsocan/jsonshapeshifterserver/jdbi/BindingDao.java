@@ -53,7 +53,7 @@ public class BindingDao {
 			  + "sourceNode VARCHAR(256), "
 			  + "stringConstant VARCHAR(512), "
 			  + "CONSTRAINT binding_key PRIMARY KEY (id),"
-			  + "CONSTRAINT transformation_fk FOREIGN KEY (transformationId) REFERENCES "+TransformationDao.TABLE_NAME+" (id))";
+			  + "CONSTRAINT transformation_fk FOREIGN KEY (transformationId) REFERENCES "+TransformationDao.TABLE_NAME+" (id) ON DELETE CASCADE)";
 	
 	private final DBI jdbi;
 	
