@@ -156,7 +156,13 @@ public class TransformationResource {
 		}
 		
 		// resolve hateoas links
-		to.addLink(new Link("sourceSchema",
+		to.addLink(new Link("self",
+			info.getBaseUriBuilder()
+			.path(this.getClass())
+			.path(this.getClass(), "get")
+			.build(to.getId())
+			.toString()))
+		.addLink(new Link("sourceSchema",
 			info.getBaseUriBuilder()
 			.path(SchemaResource.class)
 			.path(SchemaResource.class, "get")
@@ -167,6 +173,11 @@ public class TransformationResource {
 			.path(SchemaResource.class)
 			.path(SchemaResource.class, "get")
 			.build(to.getTargetSchemaId())
+			.toString()))
+		.addLink(new Link("nextToBind",
+			info.getBaseUriBuilder()
+			.path(BindingResource.class)
+			.build(to.getId())
 			.toString()));
 		
 		return to;
