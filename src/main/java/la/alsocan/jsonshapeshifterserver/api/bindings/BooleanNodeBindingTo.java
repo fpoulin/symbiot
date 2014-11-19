@@ -21,63 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.api;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Set;
-import java.util.TreeSet;
+package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class NextBindingTo {
-	
-	@JsonProperty
-	private String targetNode;
-	
-	@JsonProperty
-	private String type;
-	
-	@JsonProperty
-	private Set<String> legalBindingTypes;
-	
-	@JsonProperty
-	private Set<SourceNodeTo> legalSourceNodes;
+public class BooleanNodeBindingTo extends AbstractNodeBindingTo {
 
-	public NextBindingTo() {
-		this.legalBindingTypes = new TreeSet<>();
-		this.legalSourceNodes = new TreeSet<>();
-	}
-
-	public NextBindingTo(String targetNode, String type) {
-		this();
-		this.targetNode = targetNode;
-		this.type = type;
-	}
+	public static final String TYPE = "booleanNode";
 	
-	public NextBindingTo addLegalSourceNode(SourceNodeTo to) {
-		legalSourceNodes.add(to);
-		return this;
-	}
-	
-	public NextBindingTo addLegalBindingType(String bindingType) {
-		legalBindingTypes.add(bindingType);
-		return this;
-	}
-
-	public String getTargetNode() {
-		return targetNode;
-	}
-
-	public void setTargetNode(String targetNode) {
-		this.targetNode = targetNode;
-	}
-
+	@Override
 	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+		return TYPE;
 	}
 }

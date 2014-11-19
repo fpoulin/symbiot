@@ -27,7 +27,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberNodeBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.StringHandlebarsBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 import org.joda.time.DateTime;
 
@@ -39,7 +48,16 @@ import org.joda.time.DateTime;
 	include = JsonTypeInfo.As.PROPERTY,
 	property = "type")
 @JsonSubTypes({
+	@Type(value = ArrayConstantBindingTo.class, name = ArrayConstantBindingTo.TYPE),
+	@Type(value = ArrayNodeBindingTo.class, name = ArrayNodeBindingTo.TYPE),
+	@Type(value = BooleanConstantBindingTo.class, name = BooleanConstantBindingTo.TYPE),
+	@Type(value = BooleanNodeBindingTo.class, name = BooleanNodeBindingTo.TYPE),
+	@Type(value = IntegerConstantBindingTo.class, name = IntegerConstantBindingTo.TYPE),
+	@Type(value = IntegerNodeBindingTo.class, name = IntegerNodeBindingTo.TYPE),
+	@Type(value = NumberConstantBindingTo.class, name = NumberConstantBindingTo.TYPE),
+	@Type(value = NumberNodeBindingTo.class, name = NumberNodeBindingTo.TYPE),
 	@Type(value = StringConstantBindingTo.class, name = StringConstantBindingTo.TYPE),
+	@Type(value = StringHandlebarsBindingTo.class, name = StringHandlebarsBindingTo.TYPE),
 	@Type(value = StringNodeBindingTo.class, name = StringNodeBindingTo.TYPE)})
 public abstract class BindingTo {
 	

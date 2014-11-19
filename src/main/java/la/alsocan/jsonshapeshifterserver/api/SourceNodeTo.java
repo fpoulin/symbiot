@@ -26,48 +26,35 @@ package la.alsocan.jsonshapeshifterserver.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaNodeTo implements Comparable<SchemaNodeTo> {
+public class SourceNodeTo implements Comparable<SourceNodeTo> {
 	
 	@JsonProperty
-	private String name;
-	
-	@JsonProperty
-	private String path;
+	private String sourceNode;
 	
 	@JsonProperty
 	private String type;
 
-	public SchemaNodeTo() {
+	public SourceNodeTo() {
 	}
 
-	public SchemaNodeTo(String name, String path, String type) {
-		this.name = name;
-		this.path = path;
+	public SourceNodeTo(String sourceNode, String type) {
+		this.sourceNode = sourceNode;
 		this.type = type;
 	}
 
 	@Override
-	public int compareTo(SchemaNodeTo o) {
-		return this.path.compareTo(o.path);
+	public int compareTo(SourceNodeTo o) {
+		return this.sourceNode.compareTo(o.sourceNode);
 	}
 
-	public String getName() {
-		return name;
+	public String getSourceNode() {
+		return sourceNode;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
+	public void setSourceNode(String sourceNode) {
+		this.sourceNode = sourceNode;
 	}
 
 	public String getType() {

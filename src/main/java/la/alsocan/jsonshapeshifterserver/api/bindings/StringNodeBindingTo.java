@@ -23,29 +23,15 @@
  */
 package la.alsocan.jsonshapeshifterserver.api.bindings;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import la.alsocan.jsonshapeshifterserver.api.*;
-
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class StringNodeBindingTo extends BindingTo {
+public class StringNodeBindingTo extends AbstractNodeBindingTo {
 
 	public static final String TYPE = "stringNode";
-	
-	@JsonProperty
-	private String sourceNode;
 
 	@Override
 	public String getType() {
 		return TYPE;
-	}
-	
-	public String getSourceNode() {
-		return sourceNode;
-	}
-
-	public void setSourceNode(String sourceNode) {
-		this.sourceNode = sourceNode;
 	}
 }

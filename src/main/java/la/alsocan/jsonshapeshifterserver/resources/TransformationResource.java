@@ -26,6 +26,8 @@ package la.alsocan.jsonshapeshifterserver.resources;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -39,13 +41,25 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.schemas.ENodeType;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
 import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.NextBindingTo;
-import la.alsocan.jsonshapeshifterserver.api.SchemaNodeTo;
+import la.alsocan.jsonshapeshifterserver.api.SourceNodeTo;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.StringHandlebarsBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
@@ -145,11 +159,12 @@ public class TransformationResource {
 		Iterator<SchemaNode> it = t.toBind();
 		if (it.hasNext()) {
 			SchemaNode node = it.next();
-			NextBindingTo nextBindingTo = new NextBindingTo(node.getName(), node.getSchemaPointer(), node.getType().toString());
+			NextBindingTo nextBindingTo = new NextBindingTo(node.getSchemaPointer(), node.getType().toString());
+			legalBindingTypesFor(node.getType()).stream().forEach((type) -> {
+				nextBindingTo.addLegalBindingType(type);
+			});
 			t.legalNodesFor(node).stream().forEach((legalSourceNode) -> {
-				nextBindingTo.addLegalSourceNode(
-					new SchemaNodeTo(
-						legalSourceNode.getName(),
+				nextBindingTo.addLegalSourceNode(new SourceNodeTo(
 						legalSourceNode.getSchemaPointer(),
 						legalSourceNode.getType().toString()));
 			});
@@ -192,5 +207,42 @@ public class TransformationResource {
 		}
 		
 		return to;
+	}
+	
+	private Set<String> legalBindingTypesFor(ENodeType targetNodeType) {
+	
+		Set<String> types = new TreeSet<>();
+		switch(targetNodeType){
+			case ARRAY:
+				types.add(ArrayConstantBindingTo.TYPE);
+				types.add(ArrayNodeBindingTo.TYPE);
+				break;
+			case BOOLEAN:
+				types.add(BooleanConstantBindingTo.TYPE);
+				types.add(BooleanNodeBindingTo.TYPE);
+				break;
+			case INTEGER:
+				types.add(IntegerConstantBindingTo.TYPE);
+				types.add(IntegerNodeBindingTo.TYPE);
+				break;
+			case NUMBER:
+				types.add(IntegerConstantBindingTo.TYPE);
+				types.add(IntegerNodeBindingTo.TYPE);
+				types.add(NumberConstantBindingTo.TYPE);
+				types.add(NumberNodeBindingTo.TYPE);
+				break;
+			case STRING:
+				types.add(BooleanConstantBindingTo.TYPE);
+				types.add(BooleanNodeBindingTo.TYPE);
+				types.add(IntegerConstantBindingTo.TYPE);
+				types.add(IntegerNodeBindingTo.TYPE);
+				types.add(NumberConstantBindingTo.TYPE);
+				types.add(NumberNodeBindingTo.TYPE);
+				types.add(StringNodeBindingTo.TYPE);
+				types.add(StringHandlebarsBindingTo.TYPE);
+				types.add(StringConstantBindingTo.TYPE);
+				break;
+		}
+		return types;
 	}
 }

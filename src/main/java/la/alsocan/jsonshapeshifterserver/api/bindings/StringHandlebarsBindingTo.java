@@ -21,63 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.api;
+package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import la.alsocan.jsonshapeshifterserver.api.*;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class NextBindingTo {
+public class StringHandlebarsBindingTo extends BindingTo {
+
+	public static final String TYPE = "stringHandlebars";
 	
 	@JsonProperty
-	private String targetNode;
+	private String template;
 	
 	@JsonProperty
-	private String type;
-	
-	@JsonProperty
-	private Set<String> legalBindingTypes;
-	
-	@JsonProperty
-	private Set<SourceNodeTo> legalSourceNodes;
+	private Map<String, BindingTo> parameters;
 
-	public NextBindingTo() {
-		this.legalBindingTypes = new TreeSet<>();
-		this.legalSourceNodes = new TreeSet<>();
-	}
-
-	public NextBindingTo(String targetNode, String type) {
-		this();
-		this.targetNode = targetNode;
-		this.type = type;
+	public StringHandlebarsBindingTo() {
+		throw new UnsupportedOperationException("Handlebars bindings will come later...");
 	}
 	
-	public NextBindingTo addLegalSourceNode(SourceNodeTo to) {
-		legalSourceNodes.add(to);
-		return this;
-	}
-	
-	public NextBindingTo addLegalBindingType(String bindingType) {
-		legalBindingTypes.add(bindingType);
-		return this;
-	}
-
-	public String getTargetNode() {
-		return targetNode;
-	}
-
-	public void setTargetNode(String targetNode) {
-		this.targetNode = targetNode;
-	}
-
+	@Override
 	public String getType() {
-		return type;
+		return TYPE;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public Map<String, BindingTo> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, BindingTo> parameters) {
+		this.parameters = parameters;
 	}
 }

@@ -26,6 +26,15 @@ package la.alsocan.jsonshapeshifterserver.jdbi;
 import java.util.List;
 import java.util.Map;
 import la.alsocan.jsonshapeshifterserver.api.BindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.AbstractNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.IntegerNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberConstantBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.NumberNodeBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 import org.joda.time.DateTime;
@@ -50,9 +59,14 @@ public class BindingDao {
 			  + "type VARCHAR(32) NOT NULL, "
 			  + "targetNode VARCHAR(256) NOT NULL, "
 			  + "sourceNode VARCHAR(256), "
+			  + "arrayConstant INTEGER, "
+			  + "booleanConstant BOOLEAN, "
+			  + "integerConstant INTEGER, "
+			  + "numberConstant DOUBLE PRECISION, "
 			  + "stringConstant VARCHAR(512), "
 			  + "CONSTRAINT binding_key PRIMARY KEY (id),"
-			  + "CONSTRAINT transformation_fk FOREIGN KEY (transformationId) REFERENCES "+TransformationDao.TABLE_NAME+" (id) ON DELETE CASCADE)";
+			  + "CONSTRAINT transformation_fk FOREIGN KEY (transformationId) "
+			  + " REFERENCES " + TransformationDao.TABLE_NAME + " (id) ON DELETE CASCADE)";
 	
 	private final DBI jdbi;
 	
@@ -60,12 +74,72 @@ public class BindingDao {
 		this.jdbi = jdbi;
 	}
 	
+	// FIXME: improve this ugly method (ex: using one über-TO which is always inserte the same way)
 	public int insert(BindingTo bindingTo, int transformationId) {
 		
 		int id;
 		try (Handle h = jdbi.open()) {
 			id = -1;
 			switch(bindingTo.getType()) {
+				case ArrayNodeBindingTo.TYPE:
+				case BooleanNodeBindingTo.TYPE:
+				case IntegerNodeBindingTo.TYPE:
+				case NumberNodeBindingTo.TYPE:
+				case StringNodeBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, sourceNode) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :sourceNode)")
+						.bind("transformationId", transformationId)
+						.bind("type", bindingTo.getType())
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("sourceNode", ((AbstractNodeBindingTo)bindingTo).getSourceNode())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case ArrayConstantBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, arrayConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :arrayConstant)")
+						.bind("transformationId", transformationId)
+						.bind("type", "arrayConstant")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("arrayConstant", ((ArrayConstantBindingTo)bindingTo).getNbIterations())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case BooleanConstantBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, booleanConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :booleanConstant)")
+						.bind("transformationId", transformationId)
+						.bind("type", "booleanConstant")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("booleanConstant", ((BooleanConstantBindingTo)bindingTo).getConstant())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case IntegerConstantBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, integerConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :integerConstant)")
+						.bind("transformationId", transformationId)
+						.bind("type", "integerConstant")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("integerConstant", ((IntegerConstantBindingTo)bindingTo).getConstant())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case NumberConstantBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, numberConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :numberConstant)")
+						.bind("transformationId", transformationId)
+						.bind("type", "numberConstant")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("numberConstant", ((NumberConstantBindingTo)bindingTo).getConstant())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
 				case StringConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
 						+ " (lastModificationDate, transformationId, type, targetNode, stringConstant) "
@@ -74,17 +148,6 @@ public class BindingDao {
 						.bind("type", "stringConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("stringConstant", ((StringConstantBindingTo)bindingTo).getConstant())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
-						.first();
-					break;
-				case StringNodeBindingTo.TYPE:
-					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, sourceNode) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :sourceNode)")
-						.bind("transformationId", transformationId)
-						.bind("type", "stringNode")
-						.bind("targetNode", bindingTo.getTargetNode())
-						.bind("sourceNode", ((StringNodeBindingTo)bindingTo).getSourceNode())
 						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
 						.first();
 					break;
