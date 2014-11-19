@@ -65,36 +65,39 @@ public class BindingDao {
 		int id;
 		try (Handle h = jdbi.open()) {
 			id = -1;
-			// FIXME: improve this
-			if (bindingTo instanceof MissingBindingTo) {
-				id = h.createStatement("INSERT INTO " + TABLE_NAME
-						  + " (lastModificationDate, transformationId, type, targetNode) "
-						  + "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode)")
-						  .bind("transformationId", transformationId)
-						  .bind("type", "missing")
-						  .bind("targetNode", bindingTo.getTargetNode())
-						  .executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
-						  .first();
-			} else if (bindingTo instanceof StringConstantBindingTo) {
-				id = h.createStatement("INSERT INTO " + TABLE_NAME
-						  + " (lastModificationDate, transformationId, type, targetNode, stringConstant) "
-						  + "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :stringConstant)")
-						  .bind("transformationId", transformationId)
-						  .bind("type", "stringConstant")
-						  .bind("targetNode", bindingTo.getTargetNode())
-						  .bind("stringConstant", ((StringConstantBindingTo)bindingTo).getConstant())
-						  .executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
-						  .first();
-			} else if (bindingTo instanceof StringNodeBindingTo) {
-				id = h.createStatement("INSERT INTO " + TABLE_NAME
-						  + " (lastModificationDate, transformationId, type, targetNode, sourceNode) "
-						  + "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :sourceNode)")
-						  .bind("transformationId", transformationId)
-						  .bind("type", "stringNode")
-						  .bind("targetNode", bindingTo.getTargetNode())
-						  .bind("sourceNode", ((StringNodeBindingTo)bindingTo).getSourceNode())
-						  .executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
-						  .first();
+			switch(bindingTo.getType()) {
+				case MissingBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode)")
+						.bind("transformationId", transformationId)
+						.bind("type", "missing")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case StringConstantBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, stringConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :stringConstant)")
+						.bind("transformationId", transformationId)
+						.bind("type", "stringConstant")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("stringConstant", ((StringConstantBindingTo)bindingTo).getConstant())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
+				case StringNodeBindingTo.TYPE:
+					id = h.createStatement("INSERT INTO " + TABLE_NAME
+						+ " (lastModificationDate, transformationId, type, targetNode, sourceNode) "
+						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :sourceNode)")
+						.bind("transformationId", transformationId)
+						.bind("type", "stringNode")
+						.bind("targetNode", bindingTo.getTargetNode())
+						.bind("sourceNode", ((StringNodeBindingTo)bindingTo).getSourceNode())
+						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.first();
+					break;
 			}
 		}
 		return id;
@@ -134,15 +137,15 @@ public class BindingDao {
 			// specific fields
 			BindingTo to;
 			switch(type) {
-				case "stringConstant":
+				case StringConstantBindingTo.TYPE:
 					to = new StringConstantBindingTo();
 					((StringConstantBindingTo)to).setConstant((String)row.get("stringConstant"));
 					break;
-				case "stringNode":
+				case StringNodeBindingTo.TYPE:
 					to = new StringNodeBindingTo();
 					((StringNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
 					break;
-				case "missing":
+				case MissingBindingTo.TYPE:
 				default:
 					to = new MissingBindingTo();
 					break;
