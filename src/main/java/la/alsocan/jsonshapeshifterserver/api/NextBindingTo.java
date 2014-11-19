@@ -21,33 +21,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.jdbi;
+package la.alsocan.jsonshapeshifterserver.api;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
+ *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class TransformationMapper implements ResultSetMapper<TransformationTo> {
+public class NextBindingTo {
+	
+	@JsonProperty
+	private String name;
+	
+	@JsonProperty
+	private String path;
+	
+	@JsonProperty
+	private String type;
 
-	@Override
-	public TransformationTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		
-		// parse dates
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
-		// build to
-		return new TransformationTo(
-			r.getInt("id"), dtc, dtm, 
-			r.getInt("sourceSchemaId"), 
-			r.getInt("targetSchemaId"),
-			r.getInt("totalBindings"));
+	public NextBindingTo() {
+	}
+
+	public NextBindingTo(String name, String path, String type) {
+		this.name = name;
+		this.path = path;
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

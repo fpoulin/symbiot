@@ -49,27 +49,33 @@ public class TransformationTo {
 	private int targetSchemaId;
 	
 	@JsonProperty
-	private List<BindingTo> existingBindings;
+	private List<BindingTo> bindings;
 	
 	@JsonProperty
-	private List<BindingTo> remainingBindings;
+	private NextBindingTo nextToBind;
+	
+	@JsonProperty
+	private int totalBindings;
+	
+	@JsonProperty
+	private int remainingBindings;
 	
 	@JsonProperty
 	private List<Link> links;
 	
 	public TransformationTo() {
 		this.links = new LinkedList<>();
-		this.existingBindings = new LinkedList<>();
-		this.remainingBindings = new LinkedList<>();
+		this.bindings = new LinkedList<>();
 	}
 
-	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId) {
+	public TransformationTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId, int totalBindings) {
 		this();
 		this.id = id;
 		this.creationDate = creationDate;
 		this.lastModificationDate = lastModificationDate;
 		this.sourceSchemaId = sourceSchemaId;
 		this.targetSchemaId = targetSchemaId;
+		this.totalBindings = totalBindings;
 	}
 	
 	public TransformationTo addLink(Link link) {
@@ -77,13 +83,8 @@ public class TransformationTo {
 		return this;
 	}
 	
-	public TransformationTo addExistingBinding(BindingTo binding) {
-		this.existingBindings.add(binding);
-		return this;
-	}
-	
-	public TransformationTo addRemainingBinding(BindingTo binding) {
-		this.remainingBindings.add(binding);
+	public TransformationTo addBinding(BindingTo binding) {
+		this.bindings.add(binding);
 		return this;
 	}
 	
@@ -125,5 +126,29 @@ public class TransformationTo {
 
 	public void setTargetSchemaId(int targetSchemaId) {
 		this.targetSchemaId = targetSchemaId;
+	}
+
+	public NextBindingTo getNextToBind() {
+		return nextToBind;
+	}
+
+	public void setNextToBind(NextBindingTo nextToBind) {
+		this.nextToBind = nextToBind;
+	}
+
+	public int getTotalBindings() {
+		return totalBindings;
+	}
+
+	public void setTotalBindings(int totalBindings) {
+		this.totalBindings = totalBindings;
+	}
+
+	public int getRemainingBindings() {
+		return remainingBindings;
+	}
+
+	public void setRemainingBindings(int remainingBindings) {
+		this.remainingBindings = remainingBindings;
 	}
 }

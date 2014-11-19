@@ -45,15 +45,19 @@ public interface TransformationDao {
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
 			  + "sourceSchemaId INTEGER NOT NULL, "
 			  + "targetSchemaId INTEGER NOT NULL, "
+			  + "totalBindings INTEGER NOT NULL, "
 			  + "CONSTRAINT transformations_key PRIMARY KEY (id),"
 			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT,"
 			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT)";
 	
 	@SqlUpdate("INSERT INTO " + TABLE_NAME
-			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId) "
-			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :sourceSchemaId, :targetSchemaId)")
+			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId, totalBindings) "
+			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :sourceSchemaId, :targetSchemaId, :totalBindings)")
 	@GetGeneratedKeys
-	int insert(@Bind("sourceSchemaId") int sourceSchemaId, @Bind("targetSchemaId") int targetSchemaId);
+	int insert(
+			  @Bind("sourceSchemaId") int sourceSchemaId, 
+			  @Bind("targetSchemaId") int targetSchemaId,
+			  @Bind("totalBindings") int totalBindings);
 	
 	@SqlQuery("SELECT * FROM " + TABLE_NAME)
 	List<TransformationTo> findAll();

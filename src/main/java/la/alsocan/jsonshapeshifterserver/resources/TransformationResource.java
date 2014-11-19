@@ -41,11 +41,10 @@ import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
-import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 import la.alsocan.jsonshapeshifterserver.api.Link;
+import la.alsocan.jsonshapeshifterserver.api.NextBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.MissingBindingTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
@@ -67,11 +66,17 @@ public class TransformationResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(@Context UriInfo info, TransformationTo to) {
 		
-		// FIXME do some validations here
-		// ..
+		// count total bindings to be defined
+		Transformation t = build(to);
+		Iterator<SchemaNode> it = t.toBind();
+		int count = 0;
+		while(it.hasNext()) {
+			it.next();
+			count ++;
+		}
 		
 		// store transformation
-		int id = transformationDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId());
+		int id = transformationDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId(), count);
 		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
@@ -121,7 +126,7 @@ public class TransformationResource {
 		return Response.noContent().build();
 	}
 	
-	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
+	private Transformation build(TransformationTo to) {
 	
 		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
 		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
@@ -129,13 +134,25 @@ public class TransformationResource {
 		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
 		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
 		
-		Transformation t = new Transformation(sourceSchema, targetchema);
+		return new Transformation(sourceSchema, targetchema);
+	}
+	
+	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
+	
+		// caluclate next binding info
+		Transformation t = build(to);
 		Iterator<SchemaNode> it = t.toBind();
-		while(it.hasNext()) {
+		if (it.hasNext()) {
 			SchemaNode node = it.next();
-			BindingTo bindingTo = new MissingBindingTo();
-			bindingTo.setTargetNode(node.getSchemaPointer());
-			to.addRemainingBinding(bindingTo);
+			to.setNextToBind(new NextBindingTo(node.getName(), node.getSchemaPointer(), node.getType().toString()));
+			int remaining = 1;
+			while(it.hasNext()) {
+				it.next();
+				remaining++;
+			}
+			to.setRemainingBindings(remaining);
+		} else {
+			to.setRemainingBindings(0);
 		}
 		
 		// resolve hateoas links
