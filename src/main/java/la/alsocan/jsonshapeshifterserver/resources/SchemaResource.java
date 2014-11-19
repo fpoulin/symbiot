@@ -44,6 +44,7 @@ import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
 import la.alsocan.jsonshapeshifterserver.api.ErrorResponse;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
+import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -52,9 +53,11 @@ import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 public class SchemaResource {
 
 	private final SchemaDao schemaDao;
+	private final TransformationDao transformationDao;
 
-	public SchemaResource(SchemaDao schemaDao) {
+	public SchemaResource(SchemaDao schemaDao, TransformationDao transformationDao) {
 		this.schemaDao = schemaDao;
+		this.transformationDao = transformationDao;
 	}
 		
 	@POST
@@ -122,8 +125,12 @@ public class SchemaResource {
 			return Response.status(404)	.build();
 		}
 		
-		// FIXME if schema is used, it should not be updated
-		// ...
+		int count = transformationDao.countBySchema(schemaId);
+		if (count > 0) {
+			return Response.status(422)
+				.entity(new ErrorResponse("The schema is currently used in transformations"))
+				.build();
+		}
 		
 		// read node
 		ObjectMapper om = new ObjectMapper();
@@ -157,6 +164,13 @@ public class SchemaResource {
 		SchemaTo schemaTo = schemaDao.findById(schemaId);
 		if (schemaTo == null) {
 			return Response.status(404)	.build();
+		}
+		
+		int count = transformationDao.countBySchema(schemaId);
+		if (count > 0) {
+			return Response.status(422)
+				.entity(new ErrorResponse("The schema is currently used in transformations"))
+				.build();
 		}
 		
 		schemaDao.delete(schemaId);

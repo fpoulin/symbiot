@@ -32,19 +32,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ErrorResponse {
 	
 	@JsonProperty
-	private String reason;
+	private String message;
 
 	public ErrorResponse() {}
 	
-	public ErrorResponse(String reason) {
-		this.reason = reason;
+	public ErrorResponse(String message) {
+		this.message = message;
 	}
 
-	public String getReason() {
-		return reason;
+	public String getMessage() {
+		return message;
 	}
 
-	public void setReason(String reason) {
-		this.reason = reason;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

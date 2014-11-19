@@ -33,6 +33,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -82,9 +83,13 @@ public class TransformationResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll(@Context UriInfo info) {
-		
-		List<TransformationTo> tos = transformationDao.findAll();
+	public Response getAll(@Context UriInfo info, @QueryParam(value = "schemaId") Integer schemaId) {
+		List<TransformationTo> tos;
+		if (schemaId != null) {
+			tos = transformationDao.findBySchema(schemaId);
+		} else {
+			tos = transformationDao.findAll();
+		}
 		tos.stream().forEach((to) -> {
 			resolveTo(info, to);
 		});

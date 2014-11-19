@@ -76,7 +76,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		
 		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
-		env.jersey().register(new SchemaResource(schemaDao));
+		env.jersey().register(new SchemaResource(schemaDao, transformationDao));
 		env.jersey().register(new TransformationResource(transformationDao, schemaDao));
 		env.jersey().register(new BindingResource(bindingDao, transformationDao));
 	}

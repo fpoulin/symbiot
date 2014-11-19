@@ -46,8 +46,8 @@ public interface TransformationDao {
 			  + "sourceSchemaId INTEGER NOT NULL, "
 			  + "targetSchemaId INTEGER NOT NULL, "
 			  + "CONSTRAINT transformations_key PRIMARY KEY (id),"
-			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id),"
-			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id))";
+			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT,"
+			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT)";
 	
 	@SqlUpdate("INSERT INTO " + TABLE_NAME
 			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId) "
@@ -58,11 +58,15 @@ public interface TransformationDao {
 	@SqlQuery("SELECT * FROM " + TABLE_NAME)
 	List<TransformationTo> findAll();
 	
-	@SqlQuery("SELECT * FROM " + TABLE_NAME 
-			  + " WHERE id = :id")
+	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = :id")
 	TransformationTo findById(@Bind("id") int id);
 	
-	@SqlUpdate("DELETE FROM " + TABLE_NAME 
-			  + " WHERE id = :id")
+	@SqlQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
+	int countBySchema(@Bind("schemaId") int schemaId);
+	
+	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
+	List<TransformationTo> findBySchema(@Bind("schemaId") int schemaId);
+	
+	@SqlUpdate("DELETE FROM " + TABLE_NAME + " WHERE id = :id")
 	void delete(@Bind("id") int id);
 }
