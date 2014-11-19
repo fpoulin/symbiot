@@ -43,6 +43,7 @@ import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.schemas.ENodeType;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
+import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.NextBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.SourceNodeTo;
@@ -88,7 +89,8 @@ public class TransformationResource {
 	public Response post(@Context UriInfo info, TransformationTo to) {
 		
 		// count total bindings to be defined
-		Transformation t = TransformationBuilder.build(to, schemaDao, bindingDao);
+		List<BindingTo> bindings = bindingDao.findAll(to.getId());
+		Transformation t = TransformationBuilder.build(to, schemaDao, bindings);
 		Iterator<SchemaNode> it = t.toBind();
 		int count = 0;
 		while(it.hasNext()) {
@@ -148,9 +150,16 @@ public class TransformationResource {
 	}
 	
 	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
-	
+
+		List<BindingTo> bindings = bindingDao.findAll(to.getId());
+		Transformation t = TransformationBuilder.build(to, schemaDao, bindings);
+		
+		// add current binding info
+		bindings.stream().forEach((binding) -> {
+			to.addBinding(binding);
+		});
+		
 		// calculate next binding info
-		Transformation t = TransformationBuilder.build(to, schemaDao, bindingDao);
 		Iterator<SchemaNode> it = t.toBind();
 		if (it.hasNext()) {
 			SchemaNode node = it.next();

@@ -23,11 +23,12 @@
  */
 package la.alsocan.jsonshapeshifterserver.core;
 
+import java.util.List;
 import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
+import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
-import la.alsocan.jsonshapeshifterserver.jdbi.BindingDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 
 /**
@@ -38,7 +39,7 @@ public class TransformationBuilder {
 	public static Transformation build(
 			  TransformationTo to,
 			  SchemaDao schemaDao, 
-			  BindingDao bindingDao) {
+			  List<BindingTo> bindings) {
 	
 		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
 		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
@@ -46,6 +47,12 @@ public class TransformationBuilder {
 		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
 		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
 		
-		return new Transformation(sourceSchema, targetchema);
+		Transformation t  = new Transformation(sourceSchema, targetchema);
+		
+		bindings.stream().forEach((binding) -> {
+			t.bind(t.getTarget().at(binding.getTargetNode()), binding.build(t));
+		});
+		
+		return t;
 	}
 }

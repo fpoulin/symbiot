@@ -175,6 +175,18 @@ public class BindingDao {
 		}
 	}
 	
+	public int countByTargetNode(int transformationId, String targetNode) {
+		try(Handle h = jdbi.open()){
+			return h.createQuery("SELECT COUNT(*) FROM " + TABLE_NAME 
+					  + " WHERE transformationId = :transformationId "
+					  + "AND targetNode = :targetNode")
+					  .bind("transformationId", transformationId)
+					  .bind("targetNode", targetNode)
+					  .map(IntegerMapper.FIRST)
+					  .first();
+		}
+	}
+	
 	public void update(int id, int transformationId, BindingTo bindingTo) {
 		try(Handle h = jdbi.open()){
 			// do the job

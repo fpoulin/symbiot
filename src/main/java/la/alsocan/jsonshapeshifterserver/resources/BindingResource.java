@@ -24,6 +24,7 @@
 package la.alsocan.jsonshapeshifterserver.resources;
 
 import java.net.URI;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -74,12 +75,21 @@ public class BindingResource {
 			  @PathParam("transformationId") int transformationId, 
 			  BindingTo to) {
 		
+		int count = bindingDao.countByTargetNode(transformationId, to.getTargetNode());
+		if (count > 0) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("A binding for '"+to.getTargetNode()+"' already exists"))
+				.build();
+		}
+		
 		// lookup and build transformation
 		TransformationTo transformationTo = transformationDao.findById(transformationId);
 		if (transformationTo == null) {
 			return Response.status(404).build();
 		}
-		Transformation t = TransformationBuilder.build(transformationTo, schemaDao, bindingDao);
+		List<BindingTo> bindings = bindingDao.findAll(transformationId);
+		Transformation t = TransformationBuilder.build(transformationTo, schemaDao, bindings);
 		
 		// check target node
 		SchemaNode targetNode = t.getTarget().at(to.getTargetNode());
