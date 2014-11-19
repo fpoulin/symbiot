@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.MissingBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 import org.joda.time.DateTime;
@@ -40,7 +39,6 @@ import org.joda.time.DateTime;
 	include = JsonTypeInfo.As.PROPERTY,
 	property = "type")
 @JsonSubTypes({
-	@Type(value = MissingBindingTo.class, name = MissingBindingTo.TYPE),
 	@Type(value = StringConstantBindingTo.class, name = StringConstantBindingTo.TYPE),
 	@Type(value = StringNodeBindingTo.class, name = StringNodeBindingTo.TYPE)})
 public abstract class BindingTo {

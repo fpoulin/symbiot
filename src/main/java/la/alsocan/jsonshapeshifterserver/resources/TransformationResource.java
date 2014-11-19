@@ -127,7 +127,7 @@ public class TransformationResource {
 		return Response.noContent().build();
 	}
 	
-	private Transformation build(TransformationTo to) {
+	public Transformation build(TransformationTo to) {
 	
 		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
 		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());

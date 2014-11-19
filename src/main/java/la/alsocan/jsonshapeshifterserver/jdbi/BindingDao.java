@@ -26,7 +26,6 @@ package la.alsocan.jsonshapeshifterserver.jdbi;
 import java.util.List;
 import java.util.Map;
 import la.alsocan.jsonshapeshifterserver.api.BindingTo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.MissingBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 import org.joda.time.DateTime;
@@ -37,7 +36,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.util.IntegerMapper;
 
 /**
- * Dao for bindings, using a single table inheritance strategy (to keep it simple).
+ * Dao for bindings, using a single table inheritance strategy (to keep it <i>simple</i>).
  * @author Florian Poulin - https://github.com/fpoulin
  */
 public class BindingDao {
@@ -62,20 +61,11 @@ public class BindingDao {
 	}
 	
 	public int insert(BindingTo bindingTo, int transformationId) {
+		
 		int id;
 		try (Handle h = jdbi.open()) {
 			id = -1;
 			switch(bindingTo.getType()) {
-				case MissingBindingTo.TYPE:
-					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode)")
-						.bind("transformationId", transformationId)
-						.bind("type", "missing")
-						.bind("targetNode", bindingTo.getTargetNode())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
-						.first();
-					break;
 				case StringConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
 						+ " (lastModificationDate, transformationId, type, targetNode, stringConstant) "
@@ -135,7 +125,7 @@ public class BindingDao {
 			String type = (String)row.get("type");
 			
 			// specific fields
-			BindingTo to;
+			BindingTo to = null;
 			switch(type) {
 				case StringConstantBindingTo.TYPE:
 					to = new StringConstantBindingTo();
@@ -145,16 +135,14 @@ public class BindingDao {
 					to = new StringNodeBindingTo();
 					((StringNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
 					break;
-				case MissingBindingTo.TYPE:
-				default:
-					to = new MissingBindingTo();
-					break;
 			}
 			
 			// common fields
-			to.setId((Integer)row.get("id"));
-			to.setLastModificationDate(new DateTime(row.get("lastModificationDate"), DateTimeZone.UTC));
-			to.setTargetNode((String)row.get("targetNode"));
+			if (to != null) {
+				to.setId((Integer)row.get("id"));
+				to.setLastModificationDate(new DateTime(row.get("lastModificationDate"), DateTimeZone.UTC));
+				to.setTargetNode((String)row.get("targetNode"));
+			}
 			
 			return to;
 		}
