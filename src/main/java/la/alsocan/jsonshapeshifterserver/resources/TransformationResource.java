@@ -140,7 +140,7 @@ public class TransformationResource {
 	
 	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
 	
-		// caluclate next binding info
+		// calculate next binding info
 		Transformation t = build(to);
 		Iterator<SchemaNode> it = t.toBind();
 		if (it.hasNext()) {
@@ -182,12 +182,14 @@ public class TransformationResource {
 			.path(SchemaResource.class)
 			.path(SchemaResource.class, "get")
 			.build(to.getTargetSchemaId())
-			.toString()))
-		.addLink(new Link("nextToBind",
+			.toString()));
+		if (to.getRemainingBindings() > 0) {
+			to.addLink(new Link("nextToBind",
 			info.getBaseUriBuilder()
 			.path(BindingResource.class)
 			.build(to.getId())
 			.toString()));
+		}
 		
 		return to;
 	}
