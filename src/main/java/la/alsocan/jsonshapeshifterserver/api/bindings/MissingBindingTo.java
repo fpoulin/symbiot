@@ -28,5 +28,12 @@ import la.alsocan.jsonshapeshifterserver.api.*;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class EmptyBindingTo extends BindingTo {
+public class MissingBindingTo extends BindingTo {
+	
+	public static final String TYPE = "missing";
+
+	@Override
+	public String getType() {
+		return TYPE;
+	}
 }

@@ -27,9 +27,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import la.alsocan.jsonshapeshifterserver.api.bindings.EmptyBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.bindings.MissingBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
+import org.joda.time.DateTime;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -39,21 +40,41 @@ import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
 	include = JsonTypeInfo.As.PROPERTY,
 	property = "type")
 @JsonSubTypes({
-	@Type(value = EmptyBindingTo.class, name = "empty"),
-	@Type(value = StringConstantBindingTo.class, name = "stringConstant"),
-	@Type(value = StringNodeBindingTo.class, name = "stringNode")})
+	@Type(value = MissingBindingTo.class, name = MissingBindingTo.TYPE),
+	@Type(value = StringConstantBindingTo.class, name = StringConstantBindingTo.TYPE),
+	@Type(value = StringNodeBindingTo.class, name = StringNodeBindingTo.TYPE)})
 public abstract class BindingTo {
 	
 	@JsonProperty
+	private int id;
+	
+	@JsonProperty
+	private DateTime lastModificationDate;
+	
+	@JsonProperty
 	private String targetNode;
-
+	
 	public BindingTo() {
 	}
+
+	public abstract String getType();
 	
-	public BindingTo(String targetNode, String type) {
-		this.targetNode = targetNode;
+	public int getId() {
+		return id;
 	}
-	
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public DateTime getLastModificationDate() {
+		return lastModificationDate;
+	}
+
+	public void setLastModificationDate(DateTime lastModificationDate) {
+		this.lastModificationDate = lastModificationDate;
+	}
+
 	public String getTargetNode() {
 		return targetNode;
 	}

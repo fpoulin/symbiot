@@ -31,9 +31,16 @@ import la.alsocan.jsonshapeshifterserver.api.*;
  */
 public class StringConstantBindingTo extends BindingTo {
 
+	public static final String TYPE = "stringConstant";
+	
 	@JsonProperty
 	private String constant;
 
+	@Override
+	public String getType() {
+		return TYPE;
+	}
+	
 	public String getConstant() {
 		return constant;
 	}

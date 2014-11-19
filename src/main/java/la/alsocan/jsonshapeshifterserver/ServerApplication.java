@@ -30,6 +30,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import la.alsocan.jsonshapeshifterserver.cli.DropCreateDatabaseCommand;
 import la.alsocan.jsonshapeshifterserver.health.PingHealthCheck;
+import la.alsocan.jsonshapeshifterserver.jdbi.BindingDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 import la.alsocan.jsonshapeshifterserver.resources.BindingResource;
@@ -68,6 +69,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
 		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
 		final TransformationDao transformationDao = jdbi.onDemand(TransformationDao.class);
+		final BindingDao bindingDao = new BindingDao(jdbi);
 		
 		// configure object mapper
 		env.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -76,6 +78,6 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		env.jersey().register(new PingResource(conf.getEcho()));
 		env.jersey().register(new SchemaResource(schemaDao));
 		env.jersey().register(new TransformationResource(transformationDao, schemaDao));
-		env.jersey().register(new BindingResource());
+		env.jersey().register(new BindingResource(bindingDao, transformationDao));
 	}
 }
