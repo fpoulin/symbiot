@@ -24,6 +24,9 @@
 package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.bindings.NumberConstantBinding;
 import la.alsocan.jsonshapeshifterserver.api.*;
 
 /**
@@ -47,5 +50,10 @@ public class NumberConstantBindingTo extends BindingTo {
 
 	public void setConstant(double constant) {
 		this.constant = constant;
+	}
+	
+	@Override
+	public Binding build(Transformation t){
+		return new NumberConstantBinding(constant);
 	}
 }

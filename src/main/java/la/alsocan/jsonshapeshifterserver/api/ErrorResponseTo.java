@@ -29,14 +29,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ErrorResponse {
+public class ErrorResponseTo {
 	
 	@JsonProperty
 	private String message;
 
-	public ErrorResponse() {}
+	public ErrorResponseTo() {}
 	
-	public ErrorResponse(String message) {
+	public ErrorResponseTo(String message) {
 		this.message = message;
 	}
 

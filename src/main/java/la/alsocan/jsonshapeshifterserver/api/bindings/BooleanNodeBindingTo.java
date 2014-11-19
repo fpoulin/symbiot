@@ -23,6 +23,10 @@
  */
 package la.alsocan.jsonshapeshifterserver.api.bindings;
 
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.bindings.BooleanNodeBinding;
+
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
@@ -33,5 +37,10 @@ public class BooleanNodeBindingTo extends AbstractNodeBindingTo {
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+	
+	@Override
+	public Binding build(Transformation t){
+		return new BooleanNodeBinding(t.getSource().at(sourceNode));
 	}
 }

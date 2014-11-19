@@ -190,13 +190,45 @@ public class BindingDao {
 			// specific fields
 			BindingTo to = null;
 			switch(type) {
-				case StringConstantBindingTo.TYPE:
-					to = new StringConstantBindingTo();
-					((StringConstantBindingTo)to).setConstant((String)row.get("stringConstant"));
+				case ArrayNodeBindingTo.TYPE:
+					to = new ArrayNodeBindingTo();
+					((ArrayNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
+					break;
+				case ArrayConstantBindingTo.TYPE:
+					to = new ArrayConstantBindingTo();
+					((ArrayConstantBindingTo)to).setNbIterations((int)row.get("arrayConstant"));
+					break;
+				case BooleanNodeBindingTo.TYPE:
+					to = new BooleanNodeBindingTo();
+					((BooleanNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
+					break;
+				case BooleanConstantBindingTo.TYPE:
+					to = new BooleanConstantBindingTo();
+					((BooleanConstantBindingTo)to).setConstant((Boolean)row.get("booleanConstant"));
+					break;
+				case IntegerNodeBindingTo.TYPE:
+					to = new IntegerNodeBindingTo();
+					((IntegerNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
+					break;
+				case IntegerConstantBindingTo.TYPE:
+					to = new IntegerConstantBindingTo();
+					((IntegerConstantBindingTo)to).setConstant((Integer)row.get("integerConstant"));
+					break;
+				case NumberNodeBindingTo.TYPE:
+					to = new NumberNodeBindingTo();
+					((NumberNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
+					break;
+				case NumberConstantBindingTo.TYPE:
+					to = new NumberConstantBindingTo();
+					((NumberConstantBindingTo)to).setConstant((Double)row.get("numberConstant"));
 					break;
 				case StringNodeBindingTo.TYPE:
 					to = new StringNodeBindingTo();
 					((StringNodeBindingTo)to).setSourceNode((String)row.get("sourceNode"));
+					break;
+				case StringConstantBindingTo.TYPE:
+					to = new StringConstantBindingTo();
+					((StringConstantBindingTo)to).setConstant((String)row.get("stringConstant"));
 					break;
 			}
 			

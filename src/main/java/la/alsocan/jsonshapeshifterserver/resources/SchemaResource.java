@@ -41,7 +41,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
-import la.alsocan.jsonshapeshifterserver.api.ErrorResponse;
+import la.alsocan.jsonshapeshifterserver.api.ErrorResponseTo;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
@@ -71,7 +71,7 @@ public class SchemaResource {
 			node = om.readTree(schema);
 		} catch (IOException ex) {
 			return Response.status(422)
-				.entity(new ErrorResponse("Could not read Json tree: " + ex.getMessage()))
+				.entity(new ErrorResponseTo("Could not read Json tree: " + ex.getMessage()))
 				.build();
 		}
 		
@@ -80,7 +80,7 @@ public class SchemaResource {
 			Schema.buildSchema(node);
 		} catch (UnsupportedJsonSchemaException ex) {
 			return Response.status(422)
-				.entity(new ErrorResponse("Unsupported schema: " + ex.getMessage()))
+				.entity(new ErrorResponseTo("Unsupported schema: " + ex.getMessage()))
 				.build();
 		}
 		
@@ -128,7 +128,7 @@ public class SchemaResource {
 		int count = transformationDao.countBySchema(schemaId);
 		if (count > 0) {
 			return Response.status(422)
-				.entity(new ErrorResponse("The schema is currently used in transformations"))
+				.entity(new ErrorResponseTo("The schema is currently used in transformations"))
 				.build();
 		}
 		
@@ -139,7 +139,7 @@ public class SchemaResource {
 			node = om.readTree(schema);
 		} catch (IOException ex) {
 			return Response.status(422)
-				.entity(new ErrorResponse("Could not read Json tree: " + ex.getMessage()))
+				.entity(new ErrorResponseTo("Could not read Json tree: " + ex.getMessage()))
 				.build();
 		}
 		
@@ -148,7 +148,7 @@ public class SchemaResource {
 			Schema.buildSchema(node);
 		} catch (UnsupportedJsonSchemaException ex) {
 			return Response.status(422)
-				.entity(new ErrorResponse("Unsupported schema: " + ex.getMessage()))
+				.entity(new ErrorResponseTo("Unsupported schema: " + ex.getMessage()))
 				.build();
 		}
 		
@@ -169,7 +169,7 @@ public class SchemaResource {
 		int count = transformationDao.countBySchema(schemaId);
 		if (count > 0) {
 			return Response.status(422)
-				.entity(new ErrorResponse("The schema is currently used in transformations"))
+				.entity(new ErrorResponseTo("The schema is currently used in transformations"))
 				.build();
 		}
 		

@@ -35,9 +35,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
+import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
 import la.alsocan.jsonshapeshifterserver.api.BindingTo;
+import la.alsocan.jsonshapeshifterserver.api.ErrorResponseTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
+import la.alsocan.jsonshapeshifterserver.core.TransformationBuilder;
 import la.alsocan.jsonshapeshifterserver.jdbi.BindingDao;
+import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
 /**
@@ -47,10 +54,16 @@ import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 public class BindingResource {
 	
 	private final BindingDao bindingDao;
+	private final SchemaDao schemaDao;
 	private final TransformationDao transformationDao;
 
-	public BindingResource(BindingDao bindingDao, TransformationDao transformationDao) {
+	public BindingResource(
+			  BindingDao bindingDao,
+			  SchemaDao schemaDao,
+			  TransformationDao transformationDao) {
+		
 		this.bindingDao = bindingDao;
+		this.schemaDao = schemaDao;
 		this.transformationDao = transformationDao;
 	}
 	
@@ -61,9 +74,31 @@ public class BindingResource {
 			  @PathParam("transformationId") int transformationId, 
 			  BindingTo to) {
 		
+		// lookup and build transformation
 		TransformationTo transformationTo = transformationDao.findById(transformationId);
 		if (transformationTo == null) {
 			return Response.status(404).build();
+		}
+		Transformation t = TransformationBuilder.build(transformationTo, schemaDao, bindingDao);
+		
+		// check target node
+		SchemaNode targetNode = t.getTarget().at(to.getTargetNode());
+		if (targetNode == null) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("Could not find node '"+to.getTargetNode()+"' in target schema"))
+				.build();
+		}
+		
+		// build and apply binding
+		try {
+			Binding binding = to.build(t);
+			t.bind(targetNode, binding);
+		} catch (IllegalBindingException ex) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("Cannot add binding, reason: " + ex.getMessage()))
+				.build();
 		}
 		
 		// store binding

@@ -24,7 +24,13 @@
 package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.IOException;
 import java.util.Map;
+import java.util.TreeMap;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
+import la.alsocan.jsonshapeshifter.bindings.StringHandlebarsBinding;
 import la.alsocan.jsonshapeshifterserver.api.*;
 
 /**
@@ -63,5 +69,19 @@ public class StringHandlebarsBindingTo extends BindingTo {
 
 	public void setParameters(Map<String, BindingTo> parameters) {
 		this.parameters = parameters;
+	}
+	
+	@Override
+	public Binding build(Transformation t) {
+		
+		try {
+			Map<String, Binding> resolvedParams = new TreeMap<>();
+			for (String param : parameters.keySet()) {
+				resolvedParams.put(param, parameters.get(param).build(t));
+			}
+			return new StringHandlebarsBinding(template, resolvedParams);
+		} catch (IOException ex) {
+			throw new IllegalBindingException();
+		}
 	}
 }

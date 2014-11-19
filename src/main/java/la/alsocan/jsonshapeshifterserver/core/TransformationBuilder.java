@@ -21,26 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.jsonshapeshifterserver.api.bindings;
+package la.alsocan.jsonshapeshifterserver.core;
 
 import la.alsocan.jsonshapeshifter.Transformation;
-import la.alsocan.jsonshapeshifter.bindings.ArrayNodeBinding;
-import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.schemas.Schema;
+import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
+import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
+import la.alsocan.jsonshapeshifterserver.jdbi.BindingDao;
+import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ArrayNodeBindingTo extends AbstractNodeBindingTo {
-
-	public static final String TYPE = "arrayNode";
+public class TransformationBuilder {
 	
-	@Override
-	public String getType() {
-		return TYPE;
-	}
+	public static Transformation build(
+			  TransformationTo to,
+			  SchemaDao schemaDao, 
+			  BindingDao bindingDao) {
 	
-	@Override
-	public Binding build(Transformation t) {
-		return new ArrayNodeBinding(t.getSource().at(sourceNode));
+		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
+		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
+		
+		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
+		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
+		
+		return new Transformation(sourceSchema, targetchema);
 	}
 }

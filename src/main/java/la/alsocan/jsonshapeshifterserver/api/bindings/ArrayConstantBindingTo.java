@@ -24,6 +24,9 @@
 package la.alsocan.jsonshapeshifterserver.api.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.ArrayConstantBinding;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.jsonshapeshifterserver.api.*;
 
 /**
@@ -47,5 +50,10 @@ public class ArrayConstantBindingTo extends BindingTo {
 
 	public void setNbIterations(int nbIterations) {
 		this.nbIterations = nbIterations;
+	}
+	
+	@Override
+	public Binding build(Transformation t){
+		return new ArrayConstantBinding(nbIterations);
 	}
 }

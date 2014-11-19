@@ -27,6 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.bindings.Binding;
+import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
 import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayNodeBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.BooleanConstantBindingTo;
@@ -74,6 +77,14 @@ public abstract class BindingTo {
 	}
 
 	public abstract String getType();
+	
+	/**
+	 * Build a {@link Binding} object
+	 * @param t The transformation for which the binding must be built
+	 * @return A binding
+	 * @throws IllegalBindingException The binding could not be built
+	 */
+	public abstract Binding build(Transformation t) throws IllegalBindingException;
 	
 	public int getId() {
 		return id;

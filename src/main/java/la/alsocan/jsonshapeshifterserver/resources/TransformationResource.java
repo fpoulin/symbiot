@@ -42,12 +42,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.schemas.ENodeType;
-import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
 import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.NextBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.SourceNodeTo;
-import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.ArrayNodeBindingTo;
@@ -60,6 +58,8 @@ import la.alsocan.jsonshapeshifterserver.api.bindings.NumberNodeBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringConstantBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringHandlebarsBindingTo;
 import la.alsocan.jsonshapeshifterserver.api.bindings.StringNodeBindingTo;
+import la.alsocan.jsonshapeshifterserver.core.TransformationBuilder;
+import la.alsocan.jsonshapeshifterserver.jdbi.BindingDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
 import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 
@@ -69,12 +69,18 @@ import la.alsocan.jsonshapeshifterserver.jdbi.TransformationDao;
 @Path("/transformations")
 public class TransformationResource {
 	
-	private final TransformationDao transformationDao;
+	private final BindingDao bindingDao;
 	private final SchemaDao schemaDao;
+	private final TransformationDao transformationDao;
 
-	public TransformationResource(TransformationDao transformationDao, SchemaDao schemaDao) {
-		this.transformationDao = transformationDao;
+	public TransformationResource(
+			  BindingDao bindingDao,
+			  SchemaDao schemaDao,
+			  TransformationDao transformationDao) {
+		
+		this.bindingDao = bindingDao;
 		this.schemaDao = schemaDao;
+		this.transformationDao = transformationDao;
 	}
 	
 	@POST
@@ -82,7 +88,7 @@ public class TransformationResource {
 	public Response post(@Context UriInfo info, TransformationTo to) {
 		
 		// count total bindings to be defined
-		Transformation t = build(to);
+		Transformation t = TransformationBuilder.build(to, schemaDao, bindingDao);
 		Iterator<SchemaNode> it = t.toBind();
 		int count = 0;
 		while(it.hasNext()) {
@@ -141,21 +147,10 @@ public class TransformationResource {
 		return Response.noContent().build();
 	}
 	
-	public Transformation build(TransformationTo to) {
-	
-		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
-		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
-		
-		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
-		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
-		
-		return new Transformation(sourceSchema, targetchema);
-	}
-	
 	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
 	
 		// calculate next binding info
-		Transformation t = build(to);
+		Transformation t = TransformationBuilder.build(to, schemaDao, bindingDao);
 		Iterator<SchemaNode> it = t.toBind();
 		if (it.hasNext()) {
 			SchemaNode node = it.next();

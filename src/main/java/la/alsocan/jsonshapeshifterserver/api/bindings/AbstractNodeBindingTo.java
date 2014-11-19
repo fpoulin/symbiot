@@ -33,7 +33,7 @@ import la.alsocan.jsonshapeshifterserver.api.BindingTo;
 public abstract class AbstractNodeBindingTo extends BindingTo {
 	
 	@JsonProperty
-	private String sourceNode;
+	protected String sourceNode;
 	
 	public String getSourceNode() {
 		return sourceNode;
