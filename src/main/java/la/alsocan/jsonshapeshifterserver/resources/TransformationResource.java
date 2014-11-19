@@ -43,6 +43,7 @@ import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
 import la.alsocan.jsonshapeshifterserver.api.Link;
 import la.alsocan.jsonshapeshifterserver.api.NextBindingTo;
+import la.alsocan.jsonshapeshifterserver.api.SchemaNodeTo;
 import la.alsocan.jsonshapeshifterserver.api.SchemaTo;
 import la.alsocan.jsonshapeshifterserver.api.TransformationTo;
 import la.alsocan.jsonshapeshifterserver.jdbi.SchemaDao;
@@ -144,7 +145,15 @@ public class TransformationResource {
 		Iterator<SchemaNode> it = t.toBind();
 		if (it.hasNext()) {
 			SchemaNode node = it.next();
-			to.setNextToBind(new NextBindingTo(node.getName(), node.getSchemaPointer(), node.getType().toString()));
+			NextBindingTo nextBindingTo = new NextBindingTo(node.getName(), node.getSchemaPointer(), node.getType().toString());
+			t.legalNodesFor(node).stream().forEach((legalSourceNode) -> {
+				nextBindingTo.addLegalSourceNode(
+					new SchemaNodeTo(
+						legalSourceNode.getName(),
+						legalSourceNode.getSchemaPointer(),
+						legalSourceNode.getType().toString()));
+			});
+			to.setNextToBind(nextBindingTo);
 			int remaining = 1;
 			while(it.hasNext()) {
 				it.next();

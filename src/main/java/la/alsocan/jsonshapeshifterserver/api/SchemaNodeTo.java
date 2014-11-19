@@ -24,14 +24,12 @@
 package la.alsocan.jsonshapeshifterserver.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class NextBindingTo {
+public class SchemaNodeTo implements Comparable<SchemaNodeTo> {
 	
 	@JsonProperty
 	private String name;
@@ -41,24 +39,19 @@ public class NextBindingTo {
 	
 	@JsonProperty
 	private String type;
-	
-	@JsonProperty
-	private Set<SchemaNodeTo> legalSourceNodes;
 
-	public NextBindingTo() {
-		this.legalSourceNodes = new TreeSet<>();
+	public SchemaNodeTo() {
 	}
 
-	public NextBindingTo(String name, String path, String type) {
-		this();
+	public SchemaNodeTo(String name, String path, String type) {
 		this.name = name;
 		this.path = path;
 		this.type = type;
 	}
-	
-	public NextBindingTo addLegalSourceNode(SchemaNodeTo to) {
-		legalSourceNodes.add(to);
-		return this;
+
+	@Override
+	public int compareTo(SchemaNodeTo o) {
+		return this.path.compareTo(o.path);
 	}
 
 	public String getName() {
