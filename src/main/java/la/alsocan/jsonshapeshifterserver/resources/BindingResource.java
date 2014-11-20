@@ -26,6 +26,7 @@ package la.alsocan.jsonshapeshifterserver.resources;
 import java.net.URI;
 import java.util.List;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -75,7 +76,7 @@ public class BindingResource {
 			  @PathParam("transformationId") int transformationId, 
 			  BindingTo to) {
 		
-		int count = bindingDao.countByTargetNode(transformationId, to.getTargetNode());
+		int count = bindingDao.countByTargetNode(to.getTargetNode(), transformationId);
 		if (count > 0) {
 			return Response
 				.status(422)
@@ -156,11 +157,63 @@ public class BindingResource {
 			  @PathParam("bindingId") int bindingId,
 			  BindingTo newTo) {
 		
+		// do some validation (check that target node is not different)
+		BindingTo current = bindingDao.findById(bindingId, transformationId);
+		if (current == null) {
+			return Response.status(404).build();
+		} else if (newTo.getTargetNode() != null && !current.getTargetNode().equals(newTo.getTargetNode())) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("Expected a binding for node '"+current.getTargetNode()+"'"))
+				.build();
+		}
+		
+		// lookup and build transformation
+		TransformationTo transformationTo = transformationDao.findById(transformationId);
+		if (transformationTo == null) {
+			return Response.status(404).build();
+		}
+		List<BindingTo> bindings = bindingDao.findAll(transformationId);
+		Transformation t = TransformationBuilder.build(transformationTo, schemaDao, bindings);
+		
+		// lookup target node (should not fail, unless the target schema got updated)
+		SchemaNode targetNode = t.getTarget().at(current.getTargetNode());
+		if (targetNode == null) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("Could not find node '"+current.getTargetNode()+"' in target schema"))
+				.build();
+		}
+		
+		// build and apply binding
+		try {
+			Binding binding = newTo.build(t);
+			t.bind(targetNode, binding);
+		} catch (IllegalBindingException ex) {
+			return Response
+				.status(422)
+				.entity(new ErrorResponseTo("Cannot add binding, reason: " + ex.getMessage()))
+				.build();
+		}
+		
+		// update binding
+		bindingDao.update(bindingId, transformationTo.getId(), newTo);
+		return Response.noContent().build();
+	}
+	
+	@DELETE
+	@Path(value = "{bindingId}")
+	public Response delete(
+			  @Context UriInfo info, 
+			  @PathParam("transformationId") int transformationId, 
+			  @PathParam("bindingId") int bindingId) {
+		
 		BindingTo to = bindingDao.findById(bindingId, transformationId);
 		if (to == null) {
 			return Response.status(404).build();
 		}
-		bindingDao.update(bindingId, transformationId, newTo);
+		
+		bindingDao.delete(bindingId, transformationId);
 		return Response.noContent().build();
 	}
 }

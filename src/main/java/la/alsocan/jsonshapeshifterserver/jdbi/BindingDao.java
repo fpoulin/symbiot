@@ -175,7 +175,7 @@ public class BindingDao {
 		}
 	}
 	
-	public int countByTargetNode(int transformationId, String targetNode) {
+	public int countByTargetNode( String targetNode, int transformationId) {
 		try(Handle h = jdbi.open()){
 			return h.createQuery("SELECT COUNT(*) FROM " + TABLE_NAME 
 					  + " WHERE transformationId = :transformationId "
@@ -187,9 +187,126 @@ public class BindingDao {
 		}
 	}
 	
-	public void update(int id, int transformationId, BindingTo bindingTo) {
+	public void update(int id, int transformationId, BindingTo newTo) {
+		
+		try (Handle h = jdbi.open()) {
+			switch(newTo.getType()) {
+				case ArrayNodeBindingTo.TYPE:
+				case BooleanNodeBindingTo.TYPE:
+				case IntegerNodeBindingTo.TYPE:
+				case NumberNodeBindingTo.TYPE:
+				case StringNodeBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = :sourceNode, "
+						+ "arrayConstant = NULL, "
+						+ "booleanConstant = NULL, "
+						+ "integerConstant = NULL, "
+						+ "numberConstant = NULL, "
+						+ "stringConstant = NULL "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", newTo.getType())
+						.bind("sourceNode", ((AbstractNodeBindingTo)newTo).getSourceNode())
+						.execute();
+					break;
+				case ArrayConstantBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = NULL, "
+						+ "arrayConstant = :arrayConstant, "
+						+ "booleanConstant = NULL, "
+						+ "integerConstant = NULL, "
+						+ "numberConstant = NULL, "
+						+ "stringConstant = NULL "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", ArrayConstantBindingTo.TYPE)
+						.bind("arrayConstant", ((ArrayConstantBindingTo)newTo).getNbIterations())
+						.execute();
+					break;
+				case BooleanConstantBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = NULL, "
+						+ "arrayConstant = NULL, "
+						+ "booleanConstant = :booleanConstant, "
+						+ "integerConstant = NULL, "
+						+ "numberConstant = NULL, "
+						+ "stringConstant = NULL "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", BooleanConstantBindingTo.TYPE)
+						.bind("booleanConstant", ((BooleanConstantBindingTo)newTo).getConstant())
+						.execute();
+					break;
+				case IntegerConstantBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = NULL, "
+						+ "arrayConstant = NULL, "
+						+ "booleanConstant = NULL, "
+						+ "integerConstant = :integerConstant, "
+						+ "numberConstant = NULL, "
+						+ "stringConstant = NULL "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", IntegerConstantBindingTo.TYPE)
+						.bind("integerConstant", ((IntegerConstantBindingTo)newTo).getConstant())
+						.execute();
+					break;
+				case NumberConstantBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = NULL, "
+						+ "arrayConstant = NULL, "
+						+ "booleanConstant = NULL, "
+						+ "integerConstant = NULL, "
+						+ "numberConstant = :numberConstant, "
+						+ "stringConstant = NULL "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", NumberConstantBindingTo.TYPE)
+						.bind("numberConstant", ((NumberConstantBindingTo)newTo).getConstant())
+						.execute();
+					break;
+				case StringConstantBindingTo.TYPE:
+					h.createStatement("UPDATE " + TABLE_NAME + " SET "
+						+ "lastModificationDate = CURRENT_TIMESTAMP, "
+						+ "type = :type, "
+						+ "sourceNode = NULL, "
+						+ "arrayConstant = NULL, "
+						+ "booleanConstant = NULL, "
+						+ "integerConstant = NULL, "
+						+ "numberConstant = NULL, "
+						+ "stringConstant = :stringConstant "
+						+ "WHERE transformationId = :transformationId AND id = :id")
+						.bind("transformationId", transformationId)
+						.bind("id", id)
+						.bind("type", StringConstantBindingTo.TYPE)
+						.bind("stringConstant", ((StringConstantBindingTo)newTo).getConstant())
+						.execute();
+					break;
+			}
+		}
+	}
+	
+	public void delete(int id, int transformationId) {
 		try(Handle h = jdbi.open()){
-			// do the job
+			h.createStatement("DELETE FROM " + TABLE_NAME + " WHERE transformationId = :transformationId AND id = :id")
+					  .bind("transformationId", transformationId)
+					  .bind("id", id)
+					  .execute();
 		}
 	}
 	
