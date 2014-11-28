@@ -1,14 +1,14 @@
-# symbiot-server
+# symbiot
 
-A simple Internet of Things service that runs on your machine
+A simple Internet of Things service that runs on your machine.
 
 # Try it
 
 * Checkout out the sources
 * `cd` to the project folder
 * Run `mvn clean package`
-* Run `java -jar target/symbiot-server-XY.jar drop-and-create-db config.yml`
-* Run `java -jar target/symbiot-server-XY.jar server config.yml`
+* Run `java -jar target/symbiot-{version}.jar drop-and-create-db config.yml`
+* Run `java -jar target/symbiot-{version}.jar server config.yml`
 
 A Jetty server is started (listens on port 8080).
 
@@ -20,7 +20,7 @@ You can try it (from browser also can):
 
 # Credits
 
-This project relies on the fabulous [Drop Wizard](http://dropwizard.io/).
+This project relies on the fabulous [DropWizard](http://dropwizard.io/).
 
 # License
 
