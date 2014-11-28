@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>la.alsocan</groupId>
-	<artifactId>json-shapeshifter-server</artifactId>
+	<artifactId>symbiot-server</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Json Shapeshifter Server</name>
-	<description>An HTTP server to expose json-shapeshifter through a RESTful API</description>
+	<name>Symbiot</name>
+	<description>A simple Internet of Things service that runs on your machine</description>
 	
 	<licenses>
 		<license>
@@ -60,7 +60,7 @@
 							<transformers>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>la.alsocan.jsonshapeshifterserver.ServerApplication</mainClass>
+									<mainClass>la.alsocan.symbiot.ServerApplication</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

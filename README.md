@@ -1,14 +1,14 @@
-# json-shapeshifter-server
+# symbiot-server
 
-An HTTP server to expose json-shapeshifter through a RESTful API.
+A simple Internet of Things service that runs on your machine
 
 # Try it
 
 * Checkout out the sources
 * `cd` to the project folder
 * Run `mvn clean package`
-* Run `java -jar target/json-shapeshifter-server-XY.jar drop-and-create-db config.yml`
-* Run `java -jar target/json-shapeshifter-server-XY.jar server config.yml`
+* Run `java -jar target/symbiot-server-XY.jar drop-and-create-db config.yml`
+* Run `java -jar target/symbiot-server-XY.jar server config.yml`
 
 A Jetty server is started (listens on port 8080).
 
