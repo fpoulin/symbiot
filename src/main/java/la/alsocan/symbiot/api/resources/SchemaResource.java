@@ -44,7 +44,7 @@ import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
 import la.alsocan.symbiot.api.to.SchemaTo;
 import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.TransformationDao;
+import la.alsocan.symbiot.jdbi.StreamDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -53,11 +53,11 @@ import la.alsocan.symbiot.jdbi.TransformationDao;
 public class SchemaResource {
 
 	private final SchemaDao schemaDao;
-	private final TransformationDao transformationDao;
+	private final StreamDao streamDao;
 
-	public SchemaResource(SchemaDao schemaDao, TransformationDao transformationDao) {
+	public SchemaResource(SchemaDao schemaDao, StreamDao streamDao) {
 		this.schemaDao = schemaDao;
-		this.transformationDao = transformationDao;
+		this.streamDao = streamDao;
 	}
 		
 	@POST
@@ -125,10 +125,10 @@ public class SchemaResource {
 			return Response.status(404)	.build();
 		}
 		
-		int count = transformationDao.countBySchema(schemaId);
+		int count = streamDao.countBySchema(schemaId);
 		if (count > 0) {
 			return Response.status(422)
-				.entity(new ErrorResponseTo("The schema is currently used in transformations"))
+				.entity(new ErrorResponseTo("The schema is currently used in streams"))
 				.build();
 		}
 		
@@ -166,10 +166,10 @@ public class SchemaResource {
 			return Response.status(404)	.build();
 		}
 		
-		int count = transformationDao.countBySchema(schemaId);
+		int count = streamDao.countBySchema(schemaId);
 		if (count > 0) {
 			return Response.status(422)
-				.entity(new ErrorResponseTo("The schema is currently used in transformations"))
+				.entity(new ErrorResponseTo("The schema is currently used in streams"))
 				.build();
 		}
 		

@@ -40,14 +40,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.schemas.ENodeType;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
 import la.alsocan.symbiot.api.to.BindingTo;
 import la.alsocan.symbiot.api.to.Link;
 import la.alsocan.symbiot.api.to.NextBindingTo;
 import la.alsocan.symbiot.api.to.SourceNodeTo;
-import la.alsocan.symbiot.api.to.TransformationTo;
+import la.alsocan.symbiot.api.to.StreamTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.BooleanConstantBindingTo;
@@ -59,47 +58,48 @@ import la.alsocan.symbiot.api.to.bindings.NumberNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringHandlebarsBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
-import la.alsocan.symbiot.core.TransformationBuilder;
+import la.alsocan.symbiot.core.streams.Stream;
+import la.alsocan.symbiot.core.streams.StreamBuilder;
 import la.alsocan.symbiot.jdbi.BindingDao;
 import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.TransformationDao;
+import la.alsocan.symbiot.jdbi.StreamDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@Path("/transformations")
-public class TransformationResource {
+@Path("/streams")
+public class StreamResource {
 	
 	private final BindingDao bindingDao;
 	private final SchemaDao schemaDao;
-	private final TransformationDao transformationDao;
+	private final StreamDao streamDao;
 
-	public TransformationResource(
+	public StreamResource(
 			  BindingDao bindingDao,
 			  SchemaDao schemaDao,
-			  TransformationDao transformationDao) {
+			  StreamDao streamDao) {
 		
 		this.bindingDao = bindingDao;
 		this.schemaDao = schemaDao;
-		this.transformationDao = transformationDao;
+		this.streamDao = streamDao;
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response post(@Context UriInfo info, TransformationTo to) {
+	public Response post(@Context UriInfo info, StreamTo to) {
 		
 		// count total bindings to be defined
 		List<BindingTo> bindings = bindingDao.findAll(to.getId());
-		Transformation t = TransformationBuilder.build(to, schemaDao, bindings);
-		Iterator<SchemaNode> it = t.toBind();
+		Stream s = StreamBuilder.build(to, schemaDao, bindings);
+		Iterator<SchemaNode> it = s.getT().toBind();
 		int count = 0;
 		while(it.hasNext()) {
 			it.next();
 			count ++;
 		}
 		
-		// store transformation
-		int id = transformationDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId(), count);
+		// store stream
+		int id = streamDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId(), count);
 		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
@@ -112,11 +112,11 @@ public class TransformationResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll(@Context UriInfo info, @QueryParam(value = "schemaId") Integer schemaId) {
-		List<TransformationTo> tos;
+		List<StreamTo> tos;
 		if (schemaId != null) {
-			tos = transformationDao.findBySchema(schemaId);
+			tos = streamDao.findBySchema(schemaId);
 		} else {
-			tos = transformationDao.findAll();
+			tos = streamDao.findAll();
 		}
 		tos.stream().forEach((to) -> {
 			resolveTo(info, to);
@@ -125,34 +125,34 @@ public class TransformationResource {
 	}
 	
 	@GET
-	@Path(value = "{transformationId}")
+	@Path(value = "{streamId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response get(@Context UriInfo info, @PathParam("transformationId") int transformationId) {
+	public Response get(@Context UriInfo info, @PathParam("streamId") int streamId) {
 		
-		TransformationTo transformationTo = transformationDao.findById(transformationId);
-		if (transformationTo == null) {
+		StreamTo streamTo = streamDao.findById(streamId);
+		if (streamTo == null) {
 			return Response.status(404)	.build();
 		}
-		return Response.ok(resolveTo(info, transformationTo)).build();
+		return Response.ok(resolveTo(info, streamTo)).build();
 	}
 	
 	@DELETE
-	@Path(value = "{transformationId}")
-	public Response delete(@PathParam("transformationId") int transformationId) {
+	@Path(value = "{streamId}")
+	public Response delete(@PathParam("streamId") int streamId) {
 		
-		TransformationTo transformationTo = transformationDao.findById(transformationId);
-		if (transformationTo == null) {
+		StreamTo streamTo = streamDao.findById(streamId);
+		if (streamTo == null) {
 			return Response.status(404)	.build();
 		}
 		
-		transformationDao.delete(transformationId);
+		streamDao.delete(streamId);
 		return Response.noContent().build();
 	}
 	
-	private TransformationTo resolveTo(UriInfo info, TransformationTo to) {
+	private StreamTo resolveTo(UriInfo info, StreamTo to) {
 
 		List<BindingTo> bindings = bindingDao.findAll(to.getId());
-		Transformation t = TransformationBuilder.build(to, schemaDao, bindings);
+		Stream s = StreamBuilder.build(to, schemaDao, bindings);
 		
 		// add current binding info
 		bindings.stream().forEach((binding) -> {
@@ -160,14 +160,14 @@ public class TransformationResource {
 		});
 		
 		// calculate next binding info
-		Iterator<SchemaNode> it = t.toBind();
+		Iterator<SchemaNode> it = s.getT().toBind();
 		if (it.hasNext()) {
 			SchemaNode node = it.next();
 			NextBindingTo nextBindingTo = new NextBindingTo(node.getSchemaPointer(), node.getType().toString());
 			legalBindingTypesFor(node.getType()).stream().forEach((type) -> {
 				nextBindingTo.addLegalBindingType(type);
 			});
-			t.legalNodesFor(node).stream().forEach((legalSourceNode) -> {
+			s.getT().legalNodesFor(node).stream().forEach((legalSourceNode) -> {
 				nextBindingTo.addLegalSourceNode(new SourceNodeTo(
 						legalSourceNode.getSchemaPointer(),
 						legalSourceNode.getType().toString()));

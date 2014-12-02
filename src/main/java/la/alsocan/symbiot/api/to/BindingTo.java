@@ -27,7 +27,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import la.alsocan.jsonshapeshifter.Transformation;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
 import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
@@ -41,6 +40,7 @@ import la.alsocan.symbiot.api.to.bindings.NumberNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringHandlebarsBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
+import la.alsocan.symbiot.core.streams.Stream;
 import org.joda.time.DateTime;
 
 /**
@@ -80,11 +80,11 @@ public abstract class BindingTo {
 	
 	/**
 	 * Build a {@link Binding} object
-	 * @param t The transformation for which the binding must be built
+	 * @param s The stream for which the binding must be built
 	 * @return A binding
 	 * @throws IllegalBindingException The binding could not be built
 	 */
-	public abstract Binding build(Transformation t) throws IllegalBindingException;
+	public abstract Binding build(Stream s) throws IllegalBindingException;
 	
 	public int getId() {
 		return id;
