@@ -21,42 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import la.alsocan.symbiot.api.to.SchemaTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+package la.alsocan.symbiot.core.drivers;
 
 /**
  *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaMapper implements ResultSetMapper<SchemaTo> {
-
-	@Override
-	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		
-		// parse date
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
-		// parse schema node
-		ObjectMapper om = new ObjectMapper();
-		JsonNode node;
-		try {
-			node = om.readTree(r.getString("schemaStr"));
-		} catch (IOException ex) {
-			return null;
-		}
-		
-		// build to
-		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
-	}
+public interface SymbiotDriver {
+	
+	String getName();
+	
+	String getDescription();
+	
+	InputDataReader getInputDataReader();
+	
+	OutputDataWriter getOutputDataWriter();
 }

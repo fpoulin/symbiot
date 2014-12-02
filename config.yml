@@ -2,9 +2,9 @@ echo: ok lah
 
 database:
   driverClass: org.apache.derby.jdbc.EmbeddedDriver
-  user: shapeshifter
-  password: sh4p3sh1ft3r
-  url: jdbc:derby:derbyDB
+  user: symbiotUser
+  password: $ymb10t~dB-p@s$w0rd
+  url: jdbc:derby:symbiotDB
   properties:
     charSet: UTF-8
   maxWaitForConnection: 1s

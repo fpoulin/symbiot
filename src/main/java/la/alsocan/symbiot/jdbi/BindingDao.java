@@ -25,18 +25,18 @@ package la.alsocan.symbiot.jdbi;
 
 import java.util.List;
 import java.util.Map;
-import la.alsocan.symbiot.api.BindingTo;
-import la.alsocan.symbiot.api.bindings.AbstractNodeBindingTo;
-import la.alsocan.symbiot.api.bindings.ArrayConstantBindingTo;
-import la.alsocan.symbiot.api.bindings.ArrayNodeBindingTo;
-import la.alsocan.symbiot.api.bindings.BooleanConstantBindingTo;
-import la.alsocan.symbiot.api.bindings.BooleanNodeBindingTo;
-import la.alsocan.symbiot.api.bindings.IntegerConstantBindingTo;
-import la.alsocan.symbiot.api.bindings.IntegerNodeBindingTo;
-import la.alsocan.symbiot.api.bindings.NumberConstantBindingTo;
-import la.alsocan.symbiot.api.bindings.NumberNodeBindingTo;
-import la.alsocan.symbiot.api.bindings.StringConstantBindingTo;
-import la.alsocan.symbiot.api.bindings.StringNodeBindingTo;
+import la.alsocan.symbiot.api.to.BindingTo;
+import la.alsocan.symbiot.api.to.bindings.AbstractNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
+import la.alsocan.symbiot.api.to.bindings.ArrayNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.BooleanConstantBindingTo;
+import la.alsocan.symbiot.api.to.bindings.BooleanNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.IntegerConstantBindingTo;
+import la.alsocan.symbiot.api.to.bindings.IntegerNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.NumberConstantBindingTo;
+import la.alsocan.symbiot.api.to.bindings.NumberNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
+import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.BaseResultSetMapper;
@@ -55,7 +55,7 @@ public class BindingDao {
 			  "CREATE TABLE " + TABLE_NAME + "("
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
-			  + "transformationId INTEGER NOT NULL, "
+			  + "streamId INTEGER NOT NULL, "
 			  + "type VARCHAR(32) NOT NULL, "
 			  + "targetNode VARCHAR(256) NOT NULL, "
 			  + "sourceNode VARCHAR(256), "
@@ -65,8 +65,8 @@ public class BindingDao {
 			  + "numberConstant DOUBLE PRECISION, "
 			  + "stringConstant VARCHAR(512), "
 			  + "CONSTRAINT binding_key PRIMARY KEY (id),"
-			  + "CONSTRAINT transformation_fk FOREIGN KEY (transformationId) "
-			  + " REFERENCES " + TransformationDao.TABLE_NAME + " (id) ON DELETE CASCADE)";
+			  + "CONSTRAINT stream_fk FOREIGN KEY (streamId) "
+			  + " REFERENCES " + StreamDao.TABLE_NAME + " (id) ON DELETE CASCADE)";
 	
 	private final DBI jdbi;
 	
@@ -75,7 +75,7 @@ public class BindingDao {
 	}
 	
 	// FIXME: improve this ugly method (ex: using one über-TO which is always inserte the same way)
-	public int insert(BindingTo bindingTo, int transformationId) {
+	public int insert(BindingTo bindingTo, int streamId) {
 		
 		int id;
 		try (Handle h = jdbi.open()) {
@@ -87,9 +87,9 @@ public class BindingDao {
 				case NumberNodeBindingTo.TYPE:
 				case StringNodeBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, sourceNode) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :sourceNode)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, sourceNode) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :sourceNode)")
+						.bind("streamId", streamId)
 						.bind("type", bindingTo.getType())
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("sourceNode", ((AbstractNodeBindingTo)bindingTo).getSourceNode())
@@ -98,9 +98,9 @@ public class BindingDao {
 					break;
 				case ArrayConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, arrayConstant) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :arrayConstant)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, arrayConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :arrayConstant)")
+						.bind("streamId", streamId)
 						.bind("type", "arrayConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("arrayConstant", ((ArrayConstantBindingTo)bindingTo).getNbIterations())
@@ -109,9 +109,9 @@ public class BindingDao {
 					break;
 				case BooleanConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, booleanConstant) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :booleanConstant)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, booleanConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :booleanConstant)")
+						.bind("streamId", streamId)
 						.bind("type", "booleanConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("booleanConstant", ((BooleanConstantBindingTo)bindingTo).getConstant())
@@ -120,9 +120,9 @@ public class BindingDao {
 					break;
 				case IntegerConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, integerConstant) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :integerConstant)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, integerConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :integerConstant)")
+						.bind("streamId", streamId)
 						.bind("type", "integerConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("integerConstant", ((IntegerConstantBindingTo)bindingTo).getConstant())
@@ -131,9 +131,9 @@ public class BindingDao {
 					break;
 				case NumberConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, numberConstant) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :numberConstant)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, numberConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :numberConstant)")
+						.bind("streamId", streamId)
 						.bind("type", "numberConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("numberConstant", ((NumberConstantBindingTo)bindingTo).getConstant())
@@ -142,9 +142,9 @@ public class BindingDao {
 					break;
 				case StringConstantBindingTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (lastModificationDate, transformationId, type, targetNode, stringConstant) "
-						+ "VALUES (CURRENT_TIMESTAMP, :transformationId, :type, :targetNode, :stringConstant)")
-						.bind("transformationId", transformationId)
+						+ " (lastModificationDate, streamId, type, targetNode, stringConstant) "
+						+ "VALUES (CURRENT_TIMESTAMP, :streamId, :type, :targetNode, :stringConstant)")
+						.bind("streamId", streamId)
 						.bind("type", "stringConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("stringConstant", ((StringConstantBindingTo)bindingTo).getConstant())
@@ -156,38 +156,38 @@ public class BindingDao {
 		return id;
 	}
 	
-	public List<BindingTo> findAll(int transformationId) {
+	public List<BindingTo> findAll(int streamId) {
 		try(Handle h = jdbi.open()){
-			return h.createQuery("SELECT * FROM " + TABLE_NAME + " WHERE transformationId = :transformationId")
-					  .bind("transformationId", transformationId)
+			return h.createQuery("SELECT * FROM " + TABLE_NAME + " WHERE streamId = :streamId")
+					  .bind("streamId", streamId)
 					  .map(new BindingMapper())
 					  .list();
 		}
 	}
 	
-	public BindingTo findById(int id, int transformationId) {
+	public BindingTo findById(int id, int streamId) {
 		try(Handle h = jdbi.open()){
-			return h.createQuery("SELECT * FROM " + TABLE_NAME + " WHERE transformationId = :transformationId AND id = :id")
-					  .bind("transformationId", transformationId)
+			return h.createQuery("SELECT * FROM " + TABLE_NAME + " WHERE streamId = :streamId AND id = :id")
+					  .bind("streamId", streamId)
 					  .bind("id", id)
 					  .map(new BindingMapper())
 					  .first();
 		}
 	}
 	
-	public int countByTargetNode( String targetNode, int transformationId) {
+	public int countByTargetNode( String targetNode, int streamId) {
 		try(Handle h = jdbi.open()){
 			return h.createQuery("SELECT COUNT(*) FROM " + TABLE_NAME 
-					  + " WHERE transformationId = :transformationId "
+					  + " WHERE streamId = :streamId "
 					  + "AND targetNode = :targetNode")
-					  .bind("transformationId", transformationId)
+					  .bind("streamId", streamId)
 					  .bind("targetNode", targetNode)
 					  .map(IntegerMapper.FIRST)
 					  .first();
 		}
 	}
 	
-	public void update(int id, int transformationId, BindingTo newTo) {
+	public void update(int id, int streamId, BindingTo newTo) {
 		
 		try (Handle h = jdbi.open()) {
 			switch(newTo.getType()) {
@@ -205,8 +205,8 @@ public class BindingDao {
 						+ "integerConstant = NULL, "
 						+ "numberConstant = NULL, "
 						+ "stringConstant = NULL "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", newTo.getType())
 						.bind("sourceNode", ((AbstractNodeBindingTo)newTo).getSourceNode())
@@ -222,8 +222,8 @@ public class BindingDao {
 						+ "integerConstant = NULL, "
 						+ "numberConstant = NULL, "
 						+ "stringConstant = NULL "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", ArrayConstantBindingTo.TYPE)
 						.bind("arrayConstant", ((ArrayConstantBindingTo)newTo).getNbIterations())
@@ -239,8 +239,8 @@ public class BindingDao {
 						+ "integerConstant = NULL, "
 						+ "numberConstant = NULL, "
 						+ "stringConstant = NULL "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", BooleanConstantBindingTo.TYPE)
 						.bind("booleanConstant", ((BooleanConstantBindingTo)newTo).getConstant())
@@ -256,8 +256,8 @@ public class BindingDao {
 						+ "integerConstant = :integerConstant, "
 						+ "numberConstant = NULL, "
 						+ "stringConstant = NULL "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", IntegerConstantBindingTo.TYPE)
 						.bind("integerConstant", ((IntegerConstantBindingTo)newTo).getConstant())
@@ -273,8 +273,8 @@ public class BindingDao {
 						+ "integerConstant = NULL, "
 						+ "numberConstant = :numberConstant, "
 						+ "stringConstant = NULL "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", NumberConstantBindingTo.TYPE)
 						.bind("numberConstant", ((NumberConstantBindingTo)newTo).getConstant())
@@ -290,8 +290,8 @@ public class BindingDao {
 						+ "integerConstant = NULL, "
 						+ "numberConstant = NULL, "
 						+ "stringConstant = :stringConstant "
-						+ "WHERE transformationId = :transformationId AND id = :id")
-						.bind("transformationId", transformationId)
+						+ "WHERE streamId = :streamId AND id = :id")
+						.bind("streamId", streamId)
 						.bind("id", id)
 						.bind("type", StringConstantBindingTo.TYPE)
 						.bind("stringConstant", ((StringConstantBindingTo)newTo).getConstant())
@@ -301,10 +301,10 @@ public class BindingDao {
 		}
 	}
 	
-	public void delete(int id, int transformationId) {
+	public void delete(int id, int streamId) {
 		try(Handle h = jdbi.open()){
-			h.createStatement("DELETE FROM " + TABLE_NAME + " WHERE transformationId = :transformationId AND id = :id")
-					  .bind("transformationId", transformationId)
+			h.createStatement("DELETE FROM " + TABLE_NAME + " WHERE streamId = :streamId AND id = :id")
+					  .bind("streamId", streamId)
 					  .bind("id", id)
 					  .execute();
 		}

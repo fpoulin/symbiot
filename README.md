@@ -1,6 +1,6 @@
 # symbiot
 
-A simple Internet of Things service that runs on your machine.
+The open Internet of Things service that runs on your machine.
 
 # Try it
 

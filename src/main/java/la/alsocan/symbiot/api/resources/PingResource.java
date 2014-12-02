@@ -21,42 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.api.resources;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import la.alsocan.symbiot.api.to.SchemaTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import com.google.common.base.Optional;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import la.alsocan.symbiot.api.to.Ping;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaMapper implements ResultSetMapper<SchemaTo> {
+@Path("/ping")
+@Produces(MediaType.APPLICATION_JSON)
+public class PingResource {
 
-	@Override
-	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		
-		// parse date
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
-		// parse schema node
-		ObjectMapper om = new ObjectMapper();
-		JsonNode node;
-		try {
-			node = om.readTree(r.getString("schemaStr"));
-		} catch (IOException ex) {
-			return null;
-		}
-		
-		// build to
-		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
+	private final String defaultEcho;
+
+	public PingResource(String defaultEcho) {
+		this.defaultEcho = defaultEcho;
+	}
+	
+	@GET
+	public Ping ping(@QueryParam("echo") Optional<String> echo) {
+		return new Ping(echo.or(defaultEcho));
 	}
 }

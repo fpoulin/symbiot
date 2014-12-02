@@ -21,42 +21,68 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.api.to;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import la.alsocan.symbiot.api.to.SchemaTo;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaMapper implements ResultSetMapper<SchemaTo> {
+public class SchemaTo {
 
-	@Override
-	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		
-		// parse date
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
-		// parse schema node
-		ObjectMapper om = new ObjectMapper();
-		JsonNode node;
-		try {
-			node = om.readTree(r.getString("schemaStr"));
-		} catch (IOException ex) {
-			return null;
-		}
-		
-		// build to
-		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
+	@JsonProperty
+	private int id;
+	
+	@JsonProperty
+	private DateTime creationDate;
+	
+	@JsonProperty
+	private DateTime lastModificationDate;
+	
+	@JsonProperty
+	private JsonNode schemaNode;
+
+	public SchemaTo() {
+	}
+
+	public SchemaTo(int id, DateTime creationDate, DateTime lastModificationDate, JsonNode schemaNode) {
+		this.id = id;
+		this.creationDate = creationDate;
+		this.lastModificationDate = lastModificationDate;
+		this.schemaNode = schemaNode;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public DateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(DateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public DateTime getLastModificationDate() {
+		return lastModificationDate;
+	}
+
+	public void setLastModificationDate(DateTime lastModificationDate) {
+		this.lastModificationDate = lastModificationDate;
+	}
+
+	public JsonNode getSchemaNode() {
+		return schemaNode;
+	}
+
+	public void setSchemaNode(JsonNode schemaNode) {
+		this.schemaNode = schemaNode;
 	}
 }

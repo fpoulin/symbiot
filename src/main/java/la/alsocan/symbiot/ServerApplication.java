@@ -32,11 +32,11 @@ import la.alsocan.symbiot.cli.DropCreateDatabaseCommand;
 import la.alsocan.symbiot.health.PingHealthCheck;
 import la.alsocan.symbiot.jdbi.BindingDao;
 import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.TransformationDao;
-import la.alsocan.symbiot.resources.BindingResource;
-import la.alsocan.symbiot.resources.PingResource;
-import la.alsocan.symbiot.resources.SchemaResource;
-import la.alsocan.symbiot.resources.TransformationResource;
+import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.api.resources.BindingResource;
+import la.alsocan.symbiot.api.resources.PingResource;
+import la.alsocan.symbiot.api.resources.SchemaResource;
+import la.alsocan.symbiot.api.resources.StreamResource;
 import org.skife.jdbi.v2.DBI;
 
 /**
@@ -68,7 +68,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
 		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
-		final TransformationDao transformationDao = jdbi.onDemand(TransformationDao.class);
+		final StreamDao streamDao = jdbi.onDemand(StreamDao.class);
 		final BindingDao bindingDao = new BindingDao(jdbi);
 		
 		// configure object mapper
@@ -76,8 +76,8 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		
 		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
-		env.jersey().register(new SchemaResource(schemaDao, transformationDao));
-		env.jersey().register(new TransformationResource(bindingDao, schemaDao, transformationDao));
-		env.jersey().register(new BindingResource(bindingDao, schemaDao, transformationDao));
+		env.jersey().register(new SchemaResource(schemaDao, streamDao));
+		env.jersey().register(new StreamResource(bindingDao, schemaDao, streamDao));
+		env.jersey().register(new BindingResource(bindingDao, schemaDao, streamDao));
 	}
 }

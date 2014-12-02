@@ -21,42 +21,63 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.api.to;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import la.alsocan.symbiot.api.to.SchemaTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaMapper implements ResultSetMapper<SchemaTo> {
+public class NextBindingTo {
+	
+	@JsonProperty
+	private String targetNode;
+	
+	@JsonProperty
+	private String type;
+	
+	@JsonProperty
+	private Set<String> legalBindingTypes;
+	
+	@JsonProperty
+	private Set<SourceNodeTo> legalSourceNodes;
 
-	@Override
-	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-		
-		// parse date
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
-		// parse schema node
-		ObjectMapper om = new ObjectMapper();
-		JsonNode node;
-		try {
-			node = om.readTree(r.getString("schemaStr"));
-		} catch (IOException ex) {
-			return null;
-		}
-		
-		// build to
-		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
+	public NextBindingTo() {
+		this.legalBindingTypes = new TreeSet<>();
+		this.legalSourceNodes = new TreeSet<>();
+	}
+
+	public NextBindingTo(String targetNode, String type) {
+		this();
+		this.targetNode = targetNode;
+		this.type = type;
+	}
+	
+	public NextBindingTo addLegalSourceNode(SourceNodeTo to) {
+		legalSourceNodes.add(to);
+		return this;
+	}
+	
+	public NextBindingTo addLegalBindingType(String bindingType) {
+		legalBindingTypes.add(bindingType);
+		return this;
+	}
+
+	public String getTargetNode() {
+		return targetNode;
+	}
+
+	public void setTargetNode(String targetNode) {
+		this.targetNode = targetNode;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

@@ -32,7 +32,7 @@ import java.sql.DriverManager;
 import la.alsocan.symbiot.ServerConfiguration;
 import la.alsocan.symbiot.jdbi.BindingDao;
 import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.TransformationDao;
+import la.alsocan.symbiot.jdbi.StreamDao;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
 
@@ -42,8 +42,8 @@ import org.apache.commons.io.FileUtils;
 public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfiguration> {
 
 	private static final String EXPECTED_DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
-	private static final String EXPECTED_URL = "jdbc:derby:derbyDB";
-	private static final String DB_NAME = "derbyDB";
+	private static final String EXPECTED_URL = "jdbc:derby:symbiotDB";
+	private static final String DB_NAME = "symbiotDB";
 	
 	public DropCreateDatabaseCommand(String name) {
 		super(name, "This command drops the database and create a new one");
@@ -72,7 +72,7 @@ public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfigura
 			+ ";password=" + configuration.getDataSourceFactory().getPassword())) {
 			
 			c.createStatement().executeUpdate(SchemaDao.DDL);
-			c.createStatement().executeUpdate(TransformationDao.DDL);
+			c.createStatement().executeUpdate(StreamDao.DDL);
 			c.createStatement().executeUpdate(BindingDao.DDL);
 		}
 	}

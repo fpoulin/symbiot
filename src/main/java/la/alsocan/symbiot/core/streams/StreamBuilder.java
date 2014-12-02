@@ -21,42 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.core.streams;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
+import la.alsocan.jsonshapeshifter.Transformation;
+import la.alsocan.jsonshapeshifter.schemas.Schema;
+import la.alsocan.symbiot.api.to.BindingTo;
 import la.alsocan.symbiot.api.to.SchemaTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import la.alsocan.symbiot.api.to.StreamTo;
+import la.alsocan.symbiot.jdbi.SchemaDao;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaMapper implements ResultSetMapper<SchemaTo> {
-
-	@Override
-	public SchemaTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+public class StreamBuilder {
+	
+	public static Stream build(
+			  StreamTo to,
+			  SchemaDao schemaDao, 
+			  List<BindingTo> bindings) {
+	
+		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
+		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
 		
-		// parse date
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
+		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
+		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
 		
-		// parse schema node
-		ObjectMapper om = new ObjectMapper();
-		JsonNode node;
-		try {
-			node = om.readTree(r.getString("schemaStr"));
-		} catch (IOException ex) {
-			return null;
-		}
+		Transformation t  = new Transformation(sourceSchema, targetchema);
+		Stream s = new Stream(t);
 		
-		// build to
-		return new SchemaTo(r.getInt("id"), dtc, dtm, node);
+		bindings.stream().forEach((binding) -> {
+			t.bind(t.getTarget().at(binding.getTargetNode()), binding.build(s));
+		});
+		
+		return s;
 	}
 }
