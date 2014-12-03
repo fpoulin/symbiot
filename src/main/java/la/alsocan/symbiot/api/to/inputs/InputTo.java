@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.api.to.drivers;
+package la.alsocan.symbiot.api.to.inputs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
+import org.joda.time.DateTime;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -36,10 +36,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 	include = JsonTypeInfo.As.PROPERTY,
 	property = "type")
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = WebhookProviderTo.class, name = WebhookProviderTo.TYPE),
-	@JsonSubTypes.Type(value = PollingProviderTo.class, name = PollingProviderTo.TYPE),
-	@JsonSubTypes.Type(value = FilesystemProviderTo.class, name = FilesystemProviderTo.TYPE)})
-public class OutputProvider {
+	@JsonSubTypes.Type(value = ApiPushInputTo.class, name = ApiPushInputTo.TYPE),
+	@JsonSubTypes.Type(value = ApiPullInputTo.class, name = ApiPullInputTo.TYPE),
+	@JsonSubTypes.Type(value = FilesystemInputTo.class, name = FilesystemInputTo.TYPE)})
+public abstract class InputTo {
+
+	@JsonProperty
+	private int id;
+	
+	@JsonProperty
+	private String driverId;
+	
+	@JsonProperty
+	private String inputCollectorId;
+	
+	@JsonProperty
+	private DateTime creationDate;
+	
+	@JsonProperty
+	private DateTime lastModificationDate;
 	
 	@JsonProperty
 	private String name;
@@ -47,8 +62,50 @@ public class OutputProvider {
 	@JsonProperty
 	private String description;
 	
-	@JsonProperty
-	private JsonNode schemaNode;
+	public InputTo() {
+	}
+
+	public abstract String getType();
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDriverId() {
+		return driverId;
+	}
+
+	public void setDriverId(String driverId) {
+		this.driverId = driverId;
+	}
+
+	public String getInputCollectorId() {
+		return inputCollectorId;
+	}
+
+	public void setInputCollectorId(String inputCollectorId) {
+		this.inputCollectorId = inputCollectorId;
+	}
+
+	public DateTime getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(DateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public DateTime getLastModificationDate() {
+		return lastModificationDate;
+	}
+
+	public void setLastModificationDate(DateTime lastModificationDate) {
+		this.lastModificationDate = lastModificationDate;
+	}
 
 	public String getName() {
 		return name;
@@ -64,13 +121,5 @@ public class OutputProvider {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public JsonNode getSchemaNode() {
-		return schemaNode;
-	}
-
-	public void setSchemaNode(JsonNode schemaNode) {
-		this.schemaNode = schemaNode;
 	}
 }

@@ -31,6 +31,7 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import la.alsocan.symbiot.ServerConfiguration;
 import la.alsocan.symbiot.access.BindingDao;
+import la.alsocan.symbiot.access.InputDao;
 import la.alsocan.symbiot.access.SchemaDao;
 import la.alsocan.symbiot.access.StreamDao;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -74,6 +75,7 @@ public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfigura
 			c.createStatement().executeUpdate(SchemaDao.DDL);
 			c.createStatement().executeUpdate(StreamDao.DDL);
 			c.createStatement().executeUpdate(BindingDao.DDL);
+			c.createStatement().executeUpdate(InputDao.DDL);
 		}
 	}
 }

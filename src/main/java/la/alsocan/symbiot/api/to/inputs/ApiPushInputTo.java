@@ -21,48 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.api.to.drivers;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
+package la.alsocan.symbiot.api.to.inputs;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class WebhookProviderTo extends OutputProviderTo {
+public class ApiPushInputTo extends InputTo {
 	
-	public static final String TYPE = "webhookProvider";
+	public static final String TYPE = "apiPushInput";
 	
-	@JsonProperty
-	private String url;
-	
-	@JsonProperty
-	private String method;
-	
-	@JsonProperty
-	private Map<String, String> headers;
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
-	}
-
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
-
-	public void setHeaders(Map<String, String> headers) {
-		this.headers = headers;
+	@Override
+	public String getType() {
+		return TYPE;
 	}
 }

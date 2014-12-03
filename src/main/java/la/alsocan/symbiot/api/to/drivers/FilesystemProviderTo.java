@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class FilesystemProviderTo extends OutputProvider {
+public class FilesystemProviderTo extends OutputProviderTo {
 	
 	public static final String TYPE = "filesystemProvider";
 	

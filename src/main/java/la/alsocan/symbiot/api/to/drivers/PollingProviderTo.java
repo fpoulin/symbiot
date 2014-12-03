@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class PollingProviderTo extends OutputProvider {
+public class PollingProviderTo extends OutputProviderTo {
 	
 	public static final String TYPE = "pollingProvider";
 	

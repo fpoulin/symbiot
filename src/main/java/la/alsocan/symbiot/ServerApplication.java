@@ -32,10 +32,12 @@ import la.alsocan.symbiot.cli.DropCreateDatabaseCommand;
 import la.alsocan.symbiot.health.PingHealthCheck;
 import la.alsocan.symbiot.access.BindingDao;
 import la.alsocan.symbiot.access.DriverDao;
+import la.alsocan.symbiot.access.InputDao;
 import la.alsocan.symbiot.access.SchemaDao;
 import la.alsocan.symbiot.access.StreamDao;
 import la.alsocan.symbiot.api.resources.BindingResource;
 import la.alsocan.symbiot.api.resources.DriverResource;
+import la.alsocan.symbiot.api.resources.InputResource;
 import la.alsocan.symbiot.api.resources.PingResource;
 import la.alsocan.symbiot.api.resources.SchemaResource;
 import la.alsocan.symbiot.api.resources.StreamResource;
@@ -76,6 +78,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		final StreamDao streamDao = jdbi.onDemand(StreamDao.class);
 		final BindingDao bindingDao = new BindingDao(jdbi);
 		final DriverDao driverDao = new DriverDao(env.getObjectMapper());
+		final InputDao inputDao = new InputDao(jdbi);
 		
 		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
@@ -83,5 +86,6 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		env.jersey().register(new StreamResource(bindingDao, schemaDao, streamDao));
 		env.jersey().register(new BindingResource(bindingDao, schemaDao, streamDao));
 		env.jersey().register(new DriverResource(driverDao));
+		env.jersey().register(new InputResource(inputDao));
 	}
 }

@@ -21,67 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.api.to.drivers;
+package la.alsocan.symbiot.api.to.inputs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
+import static la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo.TYPE;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = ApiPushCollectorTo.class, name = ApiPushCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = ApiPullCollectorTo.class, name = ApiPullCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = FilesystemCollectorTo.class, name = FilesystemCollectorTo.TYPE)})
-public abstract class InputCollectorTo {
+public class FilesystemInputTo extends InputTo {
+	
+	public static final String TYPE = "filesystemInput";
 	
 	@JsonProperty
-	private String id;
+	private String folder;
 	
 	@JsonProperty
-	private String name;
+	private String regex;
 	
 	@JsonProperty
-	private String description;
-	
-	@JsonProperty
-	private JsonNode schemaNode;
+	private Boolean deleteAfterRead;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+	@Override
+	public String getType() {
+		return TYPE;
 	}
 	
-	public String getName() {
-		return name;
+	public String getFolder() {
+		return folder;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getRegex() {
+		return regex;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setRegex(String regex) {
+		this.regex = regex;
 	}
 
-	public JsonNode getSchemaNode() {
-		return schemaNode;
+	public Boolean getDeleteAfterRead() {
+		return deleteAfterRead;
 	}
 
-	public void setSchemaNode(JsonNode schemaNode) {
-		this.schemaNode = schemaNode;
+	public void setDeleteAfterRead(Boolean deleteAfterRead) {
+		this.deleteAfterRead = deleteAfterRead;
 	}
 }

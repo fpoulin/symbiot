@@ -47,7 +47,7 @@ public class DriverTo {
 	private List<InputCollectorTo> inputCollectors;
 	
 	@JsonProperty
-	private List<OutputProvider> outputProviders;
+	private List<OutputProviderTo> outputProviders;
 
 	public String getId() {
 		return id;
@@ -89,11 +89,11 @@ public class DriverTo {
 		this.inputCollectors = inputCollectors;
 	}
 
-	public List<OutputProvider> getOutputProviders() {
+	public List<OutputProviderTo> getOutputProviders() {
 		return outputProviders;
 	}
 
-	public void setOutputProviders(List<OutputProvider> outputProviders) {
+	public void setOutputProviders(List<OutputProviderTo> outputProviders) {
 		this.outputProviders = outputProviders;
 	}
 }

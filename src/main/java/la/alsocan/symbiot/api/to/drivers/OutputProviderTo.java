@@ -36,10 +36,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 	include = JsonTypeInfo.As.PROPERTY,
 	property = "type")
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = ApiPushCollectorTo.class, name = ApiPushCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = ApiPullCollectorTo.class, name = ApiPullCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = FilesystemCollectorTo.class, name = FilesystemCollectorTo.TYPE)})
-public abstract class InputCollectorTo {
+	@JsonSubTypes.Type(value = WebhookProviderTo.class, name = WebhookProviderTo.TYPE),
+	@JsonSubTypes.Type(value = PollingProviderTo.class, name = PollingProviderTo.TYPE),
+	@JsonSubTypes.Type(value = FilesystemProviderTo.class, name = FilesystemProviderTo.TYPE)})
+public abstract class OutputProviderTo {
 	
 	@JsonProperty
 	private String id;
