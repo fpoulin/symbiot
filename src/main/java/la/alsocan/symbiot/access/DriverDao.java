@@ -71,12 +71,13 @@ public class DriverDao {
 				if (!drivers.containsKey(to.getId())) {
 					drivers.put(to.getId(), to);
 				} else {
-					LOG.warn("The driver '"+file.getName()+"' uses a conflicting ID '"+to.getId()+"'");
-					LOG.info("Driver '"+file.getName()+"' will not be loaded.");
+					LOG.warn("The driver file '"+file.getName()+"' uses a conflicting ID '"+to.getId()+"'");
+					LOG.info("Check driver with name '"+drivers.get(to.getId()).getName()+"' to resolve conflict");
+					LOG.info("Driver file '"+file.getName()+"' will not be loaded");
 				}
 			} catch (IOException ex) {
 				LOG.warn("Malformed driver '"+file.getName()+"': " + ex.getMessage());
-				LOG.info("Driver '"+file.getName()+"' will not be loaded.");
+				LOG.info("Driver '"+file.getName()+"' will not be loaded");
 			}
 		}
 	}
