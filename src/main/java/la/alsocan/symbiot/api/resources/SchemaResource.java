@@ -43,8 +43,8 @@ import la.alsocan.jsonshapeshifter.schemas.Schema;
 import la.alsocan.jsonshapeshifter.schemas.UnsupportedJsonSchemaException;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
 import la.alsocan.symbiot.api.to.SchemaTo;
-import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.StreamDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin

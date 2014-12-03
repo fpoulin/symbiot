@@ -23,6 +23,7 @@
  */
 package la.alsocan.symbiot.api.to;
 
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedList;
 import java.util.List;

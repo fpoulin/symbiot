@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.access;
 
 import java.util.List;
-import la.alsocan.symbiot.api.to.StreamTo;
+import la.alsocan.symbiot.api.to.SchemaTo;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -34,42 +34,34 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@RegisterMapper(StreamMapper.class)
-public interface StreamDao {
+@RegisterMapper(SchemaMapper.class)
+public interface SchemaDao {
 	
-	static final String TABLE_NAME = "streams";
+	static final String TABLE_NAME = "schemas";
 	static final String DDL = 
 			  "CREATE TABLE " + TABLE_NAME + "("
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "creationDate TIMESTAMP NOT NULL, "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
-			  + "sourceSchemaId INTEGER NOT NULL, "
-			  + "targetSchemaId INTEGER NOT NULL, "
-			  + "totalBindings INTEGER NOT NULL, "
-			  + "CONSTRAINT streams_key PRIMARY KEY (id),"
-			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT,"
-			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT)";
+			  + "schemaStr CLOB(5000) NOT NULL, "
+			  + "CONSTRAINT schemas_key PRIMARY KEY (id))";
 	
 	@SqlUpdate("INSERT INTO " + TABLE_NAME
-			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId, totalBindings) "
-			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :sourceSchemaId, :targetSchemaId, :totalBindings)")
+			  + " (creationDate, lastModificationDate, schemaStr)"
+			  + " VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :schemaStr)")
 	@GetGeneratedKeys
-	int insert(
-			  @Bind("sourceSchemaId") int sourceSchemaId, 
-			  @Bind("targetSchemaId") int targetSchemaId,
-			  @Bind("totalBindings") int totalBindings);
+	int insert(@Bind("schemaStr") final String schemaStr);
 	
 	@SqlQuery("SELECT * FROM " + TABLE_NAME)
-	List<StreamTo> findAll();
+	List<SchemaTo> findAll();
 	
 	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = :id")
-	StreamTo findById(@Bind("id") int id);
+	SchemaTo findById(@Bind("id") int id);
 	
-	@SqlQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
-	int countBySchema(@Bind("schemaId") int schemaId);
-	
-	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
-	List<StreamTo> findBySchema(@Bind("schemaId") int schemaId);
+	@SqlUpdate("UPDATE " + TABLE_NAME
+			  + " SET lastModificationDate = CURRENT_TIMESTAMP, schemaStr = :schemaStr"
+			  + " WHERE id = :id")
+	void update(@Bind("id") int id, @Bind("schemaStr") String schemaStr);
 	
 	@SqlUpdate("DELETE FROM " + TABLE_NAME + " WHERE id = :id")
 	void delete(@Bind("id") int id);

@@ -21,38 +21,79 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.api.to.bindings;
+package la.alsocan.symbiot.api.to.drivers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import la.alsocan.jsonshapeshifter.bindings.Binding;
-import la.alsocan.jsonshapeshifter.bindings.NumberConstantBinding;
-import la.alsocan.symbiot.core.streams.Stream;
+import java.util.List;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class NumberConstantBindingTo extends BindingTo {
-
-	public static final String TYPE = "numberConstant";
+public class DriverTo {
 	
 	@JsonProperty
-	private double constant;
-
-	@Override
-	public String getType() {
-		return TYPE;
-	}
+	private String id;
 	
-	public double getConstant() {
-		return constant;
+	@JsonProperty
+	private String name;
+	
+	@JsonProperty
+	private String description;
+	
+	@JsonProperty
+	private String version;
+	
+	@JsonProperty
+	private List<InputCollectorTo> inputCollectors;
+	
+	@JsonProperty
+	private List<OutputProvider> outputProviders;
+
+	public String getId() {
+		return id;
 	}
 
-	public void setConstant(double constant) {
-		this.constant = constant;
+	public void setId(String id) {
+		this.id = id;
 	}
-	
-	@Override
-	public Binding build(Stream s){
-		return new NumberConstantBinding(constant);
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public List<InputCollectorTo> getInputCollectors() {
+		return inputCollectors;
+	}
+
+	public void setInputCollectors(List<InputCollectorTo> inputCollectors) {
+		this.inputCollectors = inputCollectors;
+	}
+
+	public List<OutputProvider> getOutputProviders() {
+		return outputProviders;
+	}
+
+	public void setOutputProviders(List<OutputProvider> outputProviders) {
+		this.outputProviders = outputProviders;
 	}
 }

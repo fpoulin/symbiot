@@ -30,10 +30,12 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import la.alsocan.symbiot.cli.DropCreateDatabaseCommand;
 import la.alsocan.symbiot.health.PingHealthCheck;
-import la.alsocan.symbiot.jdbi.BindingDao;
-import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.access.BindingDao;
+import la.alsocan.symbiot.access.DriverDao;
+import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.StreamDao;
 import la.alsocan.symbiot.api.resources.BindingResource;
+import la.alsocan.symbiot.api.resources.DriverResource;
 import la.alsocan.symbiot.api.resources.PingResource;
 import la.alsocan.symbiot.api.resources.SchemaResource;
 import la.alsocan.symbiot.api.resources.StreamResource;
@@ -64,20 +66,22 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		// health checks
 		env.healthChecks().register("ping", new PingHealthCheck());
 		
+		// configure object mapper
+		env.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		
 		// init JDBI
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
 		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
 		final StreamDao streamDao = jdbi.onDemand(StreamDao.class);
 		final BindingDao bindingDao = new BindingDao(jdbi);
-		
-		// configure object mapper
-		env.getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+		final DriverDao driverDao = new DriverDao(env.getObjectMapper());
 		
 		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
 		env.jersey().register(new SchemaResource(schemaDao, streamDao));
 		env.jersey().register(new StreamResource(bindingDao, schemaDao, streamDao));
 		env.jersey().register(new BindingResource(bindingDao, schemaDao, streamDao));
+		env.jersey().register(new DriverResource(driverDao));
 	}
 }

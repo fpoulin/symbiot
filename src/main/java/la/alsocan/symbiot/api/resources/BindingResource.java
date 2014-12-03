@@ -40,14 +40,14 @@ import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
-import la.alsocan.symbiot.api.to.BindingTo;
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
 import la.alsocan.symbiot.api.to.StreamTo;
 import la.alsocan.symbiot.core.streams.Stream;
 import la.alsocan.symbiot.core.streams.StreamBuilder;
-import la.alsocan.symbiot.jdbi.BindingDao;
-import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.access.BindingDao;
+import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.StreamDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin

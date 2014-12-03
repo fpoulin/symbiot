@@ -21,19 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.core.drivers;
+package la.alsocan.symbiot.api.to.drivers;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public interface SymbiotDriver {
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.PROPERTY,
+	property = "type")
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = ApiPushCollectorTo.class, name = ApiPushCollectorTo.TYPE),
+	@JsonSubTypes.Type(value = ApiPullCollectorTo.class, name = ApiPullCollectorTo.TYPE),
+	@JsonSubTypes.Type(value = FilesystemCollectorTo.class, name = FilesystemCollectorTo.TYPE)})
+public abstract class InputCollectorTo {
 	
-	String getName();
+	@JsonProperty
+	private String name;
 	
-	String getDescription();
+	@JsonProperty
+	private String description;
 	
-	InputDataReader getInputDataReader();
-	
-	OutputDataWriter getOutputDataWriter();
+	@JsonProperty
+	private JsonNode schemaNode;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public JsonNode getSchemaNode() {
+		return schemaNode;
+	}
+
+	public void setSchemaNode(JsonNode schemaNode) {
+		this.schemaNode = schemaNode;
+	}
 }

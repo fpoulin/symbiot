@@ -21,12 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.core.drivers;
+package la.alsocan.symbiot.access;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import la.alsocan.symbiot.api.to.StreamTo;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public interface OutputDataWriter extends DataHandler {
-	
+public class StreamMapper implements ResultSetMapper<StreamTo> {
+
+	@Override
+	public StreamTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+		
+		// parse dates
+		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
+		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
+		
+		// build to
+		return new StreamTo(
+			r.getInt("id"), dtc, dtm, 
+			r.getInt("sourceSchemaId"), 
+			r.getInt("targetSchemaId"),
+			r.getInt("totalBindings"));
+	}
 }

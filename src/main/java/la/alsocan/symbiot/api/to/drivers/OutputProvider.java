@@ -21,35 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.core.drivers.impl.filesystem;
+package la.alsocan.symbiot.api.to.drivers;
 
-import la.alsocan.symbiot.core.drivers.InputDataReader;
-import la.alsocan.symbiot.core.drivers.OutputDataWriter;
-import la.alsocan.symbiot.core.drivers.SymbiotDriver;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class FileSystemDriver implements SymbiotDriver {
+public class OutputProvider {
+	
+	@JsonProperty
+	private String name;
+	
+	@JsonProperty
+	private String description;
+	
+	@JsonProperty
+	private JsonNode schemaNode;
 
-	@Override
 	public String getName() {
-		return "A file system driver";
+		return name;
 	}
 
-	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getDescription() {
-		return "Allows to use the file system of the current machine as a Thing.";
+		return description;
 	}
 
-	@Override
-	public InputDataReader getInputDataReader() {
-		return null;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	@Override
-	public OutputDataWriter getOutputDataWriter() {
-		return null;
+	public JsonNode getSchemaNode() {
+		return schemaNode;
+	}
+
+	public void setSchemaNode(JsonNode schemaNode) {
+		this.schemaNode = schemaNode;
 	}
 }

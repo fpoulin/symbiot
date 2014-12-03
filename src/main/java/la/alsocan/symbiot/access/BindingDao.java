@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.jdbi;
+package la.alsocan.symbiot.access;
 
 import java.util.List;
 import java.util.Map;
-import la.alsocan.symbiot.api.to.BindingTo;
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.bindings.AbstractNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayNodeBindingTo;

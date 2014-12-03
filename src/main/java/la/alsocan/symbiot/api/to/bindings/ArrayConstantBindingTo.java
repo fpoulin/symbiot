@@ -26,7 +26,6 @@ package la.alsocan.symbiot.api.to.bindings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import la.alsocan.jsonshapeshifter.bindings.ArrayConstantBinding;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
-import la.alsocan.symbiot.api.to.BindingTo;
 import la.alsocan.symbiot.core.streams.Stream;
 
 /**

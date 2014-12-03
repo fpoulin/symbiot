@@ -30,9 +30,9 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import la.alsocan.symbiot.ServerConfiguration;
-import la.alsocan.symbiot.jdbi.BindingDao;
-import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.access.BindingDao;
+import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.StreamDao;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
 

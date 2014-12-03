@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import la.alsocan.jsonshapeshifter.schemas.ENodeType;
 import la.alsocan.jsonshapeshifter.schemas.SchemaNode;
-import la.alsocan.symbiot.api.to.BindingTo;
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.Link;
 import la.alsocan.symbiot.api.to.NextBindingTo;
 import la.alsocan.symbiot.api.to.SourceNodeTo;
@@ -60,9 +60,9 @@ import la.alsocan.symbiot.api.to.bindings.StringHandlebarsBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
 import la.alsocan.symbiot.core.streams.Stream;
 import la.alsocan.symbiot.core.streams.StreamBuilder;
-import la.alsocan.symbiot.jdbi.BindingDao;
-import la.alsocan.symbiot.jdbi.SchemaDao;
-import la.alsocan.symbiot.jdbi.StreamDao;
+import la.alsocan.symbiot.access.BindingDao;
+import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.StreamDao;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin

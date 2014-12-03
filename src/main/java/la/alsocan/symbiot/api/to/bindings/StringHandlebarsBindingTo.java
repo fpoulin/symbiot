@@ -30,7 +30,6 @@ import java.util.TreeMap;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
 import la.alsocan.jsonshapeshifter.bindings.StringHandlebarsBinding;
-import la.alsocan.symbiot.api.to.BindingTo;
 import la.alsocan.symbiot.core.streams.Stream;
 
 /**

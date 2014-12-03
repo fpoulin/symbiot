@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.api.to;
+package la.alsocan.symbiot.api.to.bindings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -29,17 +29,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.jsonshapeshifter.bindings.IllegalBindingException;
-import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
-import la.alsocan.symbiot.api.to.bindings.ArrayNodeBindingTo;
-import la.alsocan.symbiot.api.to.bindings.BooleanConstantBindingTo;
-import la.alsocan.symbiot.api.to.bindings.BooleanNodeBindingTo;
-import la.alsocan.symbiot.api.to.bindings.IntegerConstantBindingTo;
-import la.alsocan.symbiot.api.to.bindings.IntegerNodeBindingTo;
-import la.alsocan.symbiot.api.to.bindings.NumberConstantBindingTo;
-import la.alsocan.symbiot.api.to.bindings.NumberNodeBindingTo;
-import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
-import la.alsocan.symbiot.api.to.bindings.StringHandlebarsBindingTo;
-import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
 import la.alsocan.symbiot.core.streams.Stream;
 import org.joda.time.DateTime;
 

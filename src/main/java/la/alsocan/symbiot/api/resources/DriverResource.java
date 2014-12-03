@@ -21,39 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package la.alsocan.symbiot.core.streams;
+package la.alsocan.symbiot.api.resources;
 
-import java.util.List;
-import la.alsocan.jsonshapeshifter.Transformation;
-import la.alsocan.jsonshapeshifter.schemas.Schema;
-import la.alsocan.symbiot.api.to.bindings.BindingTo;
-import la.alsocan.symbiot.api.to.SchemaTo;
-import la.alsocan.symbiot.api.to.StreamTo;
-import la.alsocan.symbiot.access.SchemaDao;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import la.alsocan.symbiot.access.DriverDao;
+import la.alsocan.symbiot.api.to.drivers.DriverTo;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class StreamBuilder {
+@Path("/drivers")
+public class DriverResource {
 	
-	public static Stream build(
-			  StreamTo to,
-			  SchemaDao schemaDao, 
-			  List<BindingTo> bindings) {
+	private final DriverDao driverDao;
+
+	public DriverResource(DriverDao driverDao) {
+		this.driverDao = driverDao;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAll() {
+		return Response.ok(driverDao.findAll()).build();
+	}
 	
-		SchemaTo sourceSchemaTo = schemaDao.findById(to.getSourceSchemaId());
-		Schema sourceSchema = Schema.buildSchema(sourceSchemaTo.getSchemaNode());
-		
-		SchemaTo targetSchemaTo = schemaDao.findById(to.getTargetSchemaId());
-		Schema targetchema = Schema.buildSchema(targetSchemaTo.getSchemaNode());
-		
-		Transformation t  = new Transformation(sourceSchema, targetchema);
-		Stream s = new Stream(t);
-		
-		bindings.stream().forEach((binding) -> {
-			t.bind(t.getTarget().at(binding.getTargetNode()), binding.build(s));
-		});
-		
-		return s;
+	@GET
+	@Path(value = "{driverId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get(@PathParam("driverId") String driverId) {
+		DriverTo to = driverDao.findById(driverId);
+		if (to == null) {
+			return Response.status(404)	.build();
+		}
+		return Response.ok(to).build();
 	}
 }
