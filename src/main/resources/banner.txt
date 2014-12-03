@@ -6,4 +6,4 @@
        |___/                             
 
     The Open Internet of Things service
-    that runs on your machine (v0.1.0)
+    that runs on your machine (v${project.version})
