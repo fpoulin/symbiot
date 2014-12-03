@@ -24,53 +24,22 @@
 package la.alsocan.symbiot.api.to.drivers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = WebhookProviderTo.class, name = WebhookProviderTo.TYPE),
-	@JsonSubTypes.Type(value = PollingProviderTo.class, name = PollingProviderTo.TYPE),
-	@JsonSubTypes.Type(value = FilesystemProviderTo.class, name = FilesystemProviderTo.TYPE)})
-public class OutputProvider {
+public class FilesystemProviderTo extends OutputProvider {
+	
+	public static final String TYPE = "filesystemProvider";
 	
 	@JsonProperty
-	private String name;
-	
-	@JsonProperty
-	private String description;
-	
-	@JsonProperty
-	private JsonNode schemaNode;
+	private String folder;
 
-	public String getName() {
-		return name;
+	public String getFolder() {
+		return folder;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public JsonNode getSchemaNode() {
-		return schemaNode;
-	}
-
-	public void setSchemaNode(JsonNode schemaNode) {
-		this.schemaNode = schemaNode;
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 }
