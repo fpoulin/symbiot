@@ -24,64 +24,57 @@
 package la.alsocan.symbiot.api.to.drivers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Map;
 
 /**
+ *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type")
-@JsonSubTypes({
-	@JsonSubTypes.Type(value = ApiPushCollectorTo.class, name = ApiPushCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = ApiPullCollectorTo.class, name = ApiPullCollectorTo.TYPE),
-	@JsonSubTypes.Type(value = FilesystemCollectorTo.class, name = FilesystemCollectorTo.TYPE)})
-public abstract class InputCollectorTo {
+public class ApiPullInputDefinitionTo extends InputDefinitionTo {
+	
+	public static final String TYPE = "apiPullInputDefinition";
 	
 	@JsonProperty
-	private String id;
+	private Integer frequency;
 	
 	@JsonProperty
-	private String name;
+	private String url;
 	
 	@JsonProperty
-	private String description;
+	private String method;
 	
 	@JsonProperty
-	private JsonNode schemaNode;
+	private Map<String, String> headers;
 
-	public String getId() {
-		return id;
+	public Integer getFrequency() {
+		return frequency;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getName() {
-		return name;
+	public void setFrequency(Integer frequency) {
+		this.frequency = frequency;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getUrl() {
+		return url;
 	}
 
-	public String getDescription() {
-		return description;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public String getMethod() {
+		return method;
 	}
 
-	public JsonNode getSchemaNode() {
-		return schemaNode;
+	public void setMethod(String method) {
+		this.method = method;
 	}
 
-	public void setSchemaNode(JsonNode schemaNode) {
-		this.schemaNode = schemaNode;
+	public Map<String, String> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
 	}
 }

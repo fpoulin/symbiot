@@ -48,7 +48,7 @@ public abstract class OutputTo {
 	private String driverId;
 	
 	@JsonProperty
-	private String outputProviderId;
+	private String outputDefinitionId;
 	
 	@JsonProperty
 	private DateTime creationDate;
@@ -83,12 +83,12 @@ public abstract class OutputTo {
 		this.driverId = driverId;
 	}
 
-	public String getOutputProviderId() {
-		return outputProviderId;
+	public String getOutputDefinitionId() {
+		return outputDefinitionId;
 	}
 
-	public void setOutputProviderId(String outputProviderId) {
-		this.outputProviderId = outputProviderId;
+	public void setOutputDefinitionId(String outputDefinitionId) {
+		this.outputDefinitionId = outputDefinitionId;
 	}
 	
 	public DateTime getCreationDate() {

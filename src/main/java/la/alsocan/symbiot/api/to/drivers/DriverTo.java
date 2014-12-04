@@ -44,10 +44,10 @@ public class DriverTo {
 	private String version;
 	
 	@JsonProperty
-	private List<InputCollectorTo> inputCollectors;
+	private List<InputDefinitionTo> inputDefinitions;
 	
 	@JsonProperty
-	private List<OutputProviderTo> outputProviders;
+	private List<OutputDefinitionTo> outputDefinitions;
 
 	public String getId() {
 		return id;
@@ -81,19 +81,19 @@ public class DriverTo {
 		this.version = version;
 	}
 
-	public List<InputCollectorTo> getInputCollectors() {
-		return inputCollectors;
+	public List<InputDefinitionTo> getInputDefinitions() {
+		return inputDefinitions;
 	}
 
-	public void setInputCollectors(List<InputCollectorTo> inputCollectors) {
-		this.inputCollectors = inputCollectors;
+	public void setInputDefinitions(List<InputDefinitionTo> inputDefinitions) {
+		this.inputDefinitions = inputDefinitions;
 	}
 
-	public List<OutputProviderTo> getOutputProviders() {
-		return outputProviders;
+	public List<OutputDefinitionTo> getOutputDefinitions() {
+		return outputDefinitions;
 	}
 
-	public void setOutputProviders(List<OutputProviderTo> outputProviders) {
-		this.outputProviders = outputProviders;
+	public void setOutputDefinitions(List<OutputDefinitionTo> outputDefinitions) {
+		this.outputDefinitions = outputDefinitions;
 	}
 }

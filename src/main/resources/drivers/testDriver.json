@@ -3,12 +3,12 @@
 	"name": "myDriver",
 	"description": "This driver does basically nothing",
 	"version": "0.1.0",
-	"inputCollectors": [
+	"inputDefinitions": [
 		{
-			"type": "apiPushCollector",
-			"id": "push-collector",
-			"name": "push collector",
-			"description": "a push collector",
+			"type": "apiPushInputDefinition",
+			"id": "push-input-definition",
+			"name": "push input definition",
+			"description": "a push input definition",
 			"schemaNode": {
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
@@ -21,10 +21,10 @@
 			}
 		},
 		{
-			"type": "apiPullCollector",
-			"id": "pull-collector",
-			"name": "pull collector",
-			"description": "a pull collector",
+			"type": "apiPullInputDefinition",
+			"id": "pull-input-definition",
+			"name": "pull input definition",
+			"description": "a pull input definition",
 			"schemaNode": {
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
@@ -43,10 +43,10 @@
 			}
 		},
 		{
-			"type": "filesystemCollector",
-			"id": "filesystem-collector",
-			"name": "filesystem collector",
-			"description": "a filesystem collector",
+			"type": "filesystemInputDefinition",
+			"id": "filesystem-input-definition",
+			"name": "filesystem input definition",
+			"description": "a filesystem input definition",
 			"schemaNode": {
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
@@ -62,12 +62,12 @@
 			"deleteAfterRead": false
 		}
 	],
-	"outputProviders": [
+	"outputDefinitions": [
 		{
-			"type": "webhookProvider",
-			"id": "webhook-provider",
-			"name": "output provider",
-			"description": "an output provider",
+			"type": "webhookOutputDefinition",
+			"id": "webhook-output-definition",
+			"name": "webhook output definition",
+			"description": "a webhook output definition",
 			"url": "http://192.168.0.14/toaster_api/heatValue",
 			"method": "POST",
 			"headers": {
@@ -85,10 +85,10 @@
 			}
 		},
 		{
-			"type": "pollingProvider",
-			"id": "polling-provider",
-			"name": "output provider",
-			"description": "an output provider",
+			"type": "pollingOutputDefinition",
+			"id": "polling-output-definition",
+			"name": "polling output definition",
+			"description": "a polling output definition",
 			"ttl": 30,
 			"schemaNode": {
 				"$schema": "http://json-schema.org/draft-04/schema#",
@@ -102,10 +102,10 @@
 			}
 		},
 		{
-			"type": "filesystemProvider",
-			"id": "filesystem-provider",
-			"name": "output provider",
-			"description": "an output provider",
+			"type": "filesystemOutputDefinition",
+			"id": "filesystem-output-definition",
+			"name": "filesystem output definition",
+			"description": "a filesystem output definition",
 			"folder": "/myDropbox",
 			"schemaNode": {
 				"$schema": "http://json-schema.org/draft-04/schema#",

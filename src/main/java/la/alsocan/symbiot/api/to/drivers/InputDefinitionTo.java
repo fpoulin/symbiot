@@ -24,22 +24,64 @@
 package la.alsocan.symbiot.api.to.drivers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class FilesystemProviderTo extends OutputProviderTo {
-	
-	public static final String TYPE = "filesystemProvider";
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.PROPERTY,
+	property = "type")
+@JsonSubTypes({
+	@JsonSubTypes.Type(value = ApiPushInputDefinitionTo.class, name = ApiPushInputDefinitionTo.TYPE),
+	@JsonSubTypes.Type(value = ApiPullInputDefinitionTo.class, name = ApiPullInputDefinitionTo.TYPE),
+	@JsonSubTypes.Type(value = FilesystemInputDefinitionTo.class, name = FilesystemInputDefinitionTo.TYPE)})
+public abstract class InputDefinitionTo {
 	
 	@JsonProperty
-	private String folder;
+	private String id;
+	
+	@JsonProperty
+	private String name;
+	
+	@JsonProperty
+	private String description;
+	
+	@JsonProperty
+	private JsonNode schemaNode;
 
-	public String getFolder() {
-		return folder;
+	public String getId() {
+		return id;
 	}
 
-	public void setFolder(String folder) {
-		this.folder = folder;
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public JsonNode getSchemaNode() {
+		return schemaNode;
+	}
+
+	public void setSchemaNode(JsonNode schemaNode) {
+		this.schemaNode = schemaNode;
 	}
 }

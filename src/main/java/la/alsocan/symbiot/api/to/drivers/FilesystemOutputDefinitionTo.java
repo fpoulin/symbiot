@@ -28,18 +28,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class FilesystemCollectorTo extends InputCollectorTo {
+public class FilesystemOutputDefinitionTo extends OutputDefinitionTo {
 	
-	public static final String TYPE = "filesystemCollector";
+	public static final String TYPE = "filesystemOutputDefinition";
 	
 	@JsonProperty
 	private String folder;
-	
-	@JsonProperty
-	private String regex;
-	
-	@JsonProperty
-	private Boolean deleteAfterRead;
 
 	public String getFolder() {
 		return folder;
@@ -47,21 +41,5 @@ public class FilesystemCollectorTo extends InputCollectorTo {
 
 	public void setFolder(String folder) {
 		this.folder = folder;
-	}
-
-	public String getRegex() {
-		return regex;
-	}
-
-	public void setRegex(String regex) {
-		this.regex = regex;
-	}
-
-	public Boolean getDeleteAfterRead() {
-		return deleteAfterRead;
-	}
-
-	public void setDeleteAfterRead(Boolean deleteAfterRead) {
-		this.deleteAfterRead = deleteAfterRead;
 	}
 }

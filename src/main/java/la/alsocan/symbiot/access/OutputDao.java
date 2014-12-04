@@ -49,7 +49,7 @@ public class OutputDao {
 			  + "creationDate TIMESTAMP NOT NULL, "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
 			  + "driverId VARCHAR(32) NOT NULL, "
-			  + "outputProviderId VARCHAR(32) NOT NULL, "
+			  + "outputDefinitionId VARCHAR(32) NOT NULL, "
 			  + "type VARCHAR(32) NOT NULL, "
 			  + "name VARCHAR(32) NOT NULL, "
 			  + "description VARCHAR(512) NOT NULL, "
@@ -75,10 +75,10 @@ public class OutputDao {
 			switch(outputTo.getType()) {
 				case WebhookOutputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, outputProviderId, type, name, description, url, method) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputProviderId, :type, :name, :description, :url, :method)")
+						+ " (creationDate, lastModificationDate, driverId, outputDefinitionId, type, name, description, url, method) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputDefinitionId, :type, :name, :description, :url, :method)")
 						.bind("driverId", outputTo.getDriverId())
-						.bind("outputProviderId", outputTo.getOutputProviderId())
+						.bind("outputDefinitionId", outputTo.getOutputDefinitionId())
 						.bind("type", WebhookOutputTo.TYPE)
 						.bind("name", outputTo.getName())
 						.bind("description", outputTo.getDescription())
@@ -92,10 +92,10 @@ public class OutputDao {
 					break;
 				case PollingOutputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, outputProviderId, type, name, description, ttl) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputProviderId, :type, :name, :description, :ttl)")
+						+ " (creationDate, lastModificationDate, driverId, outputDefinitionId, type, name, description, ttl) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputDefinitionId, :type, :name, :description, :ttl)")
 						.bind("driverId", outputTo.getDriverId())
-						.bind("outputProviderId", outputTo.getOutputProviderId())
+						.bind("outputDefinitionId", outputTo.getOutputDefinitionId())
 						.bind("type", PollingOutputTo.TYPE)
 						.bind("name", outputTo.getName())
 						.bind("description", outputTo.getDescription())
@@ -105,10 +105,10 @@ public class OutputDao {
 					break;
 				case FilesystemOutputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, outputProviderId, type, name, description, folder) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputProviderId, :type, :name, :description, :folder)")
+						+ " (creationDate, lastModificationDate, driverId, outputDefinitionId, type, name, description, folder) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :outputDefinitionId, :type, :name, :description, :folder)")
 						.bind("driverId", outputTo.getDriverId())
-						.bind("outputProviderId", outputTo.getOutputProviderId())
+						.bind("outputDefinitionId", outputTo.getOutputDefinitionId())
 						.bind("type", FilesystemOutputTo.TYPE)
 						.bind("name", outputTo.getName())
 						.bind("description", outputTo.getDescription())
@@ -231,7 +231,7 @@ public class OutputDao {
 				to.setName((String)row.get("name"));
 				to.setDescription((String)row.get("description"));
 				to.setDriverId((String)row.get("driverId"));
-				to.setOutputProviderId((String)row.get("outputProviderId"));
+				to.setOutputDefinitionId((String)row.get("outputDefinitionId"));
 				to.setCreationDate(new DateTime(row.get("creationDate"), DateTimeZone.UTC));
 				to.setLastModificationDate(new DateTime(row.get("lastModificationDate"), DateTimeZone.UTC));
 			}

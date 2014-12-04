@@ -48,7 +48,7 @@ public abstract class InputTo {
 	private String driverId;
 	
 	@JsonProperty
-	private String inputCollectorId;
+	private String inputDefinitionId;
 	
 	@JsonProperty
 	private DateTime creationDate;
@@ -83,12 +83,12 @@ public abstract class InputTo {
 		this.driverId = driverId;
 	}
 
-	public String getInputCollectorId() {
-		return inputCollectorId;
+	public String getInputDefinitionId() {
+		return inputDefinitionId;
 	}
 
-	public void setInputCollectorId(String inputCollectorId) {
-		this.inputCollectorId = inputCollectorId;
+	public void setInputDefinitionId(String inputDefinitionId) {
+		this.inputDefinitionId = inputDefinitionId;
 	}
 
 	public DateTime getCreationDate() {

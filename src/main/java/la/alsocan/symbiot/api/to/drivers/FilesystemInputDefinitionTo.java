@@ -28,18 +28,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class PollingProviderTo extends OutputProviderTo {
+public class FilesystemInputDefinitionTo extends InputDefinitionTo {
 	
-	public static final String TYPE = "pollingProvider";
+	public static final String TYPE = "filesystemInputDefinition";
 	
 	@JsonProperty
-	private Integer ttl;
+	private String folder;
+	
+	@JsonProperty
+	private String regex;
+	
+	@JsonProperty
+	private Boolean deleteAfterRead;
 
-	public Integer getTtl() {
-		return ttl;
+	public String getFolder() {
+		return folder;
 	}
 
-	public void setTtl(Integer ttl) {
-		this.ttl = ttl;
+	public void setFolder(String folder) {
+		this.folder = folder;
+	}
+
+	public String getRegex() {
+		return regex;
+	}
+
+	public void setRegex(String regex) {
+		this.regex = regex;
+	}
+
+	public Boolean getDeleteAfterRead() {
+		return deleteAfterRead;
+	}
+
+	public void setDeleteAfterRead(Boolean deleteAfterRead) {
+		this.deleteAfterRead = deleteAfterRead;
 	}
 }

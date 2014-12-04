@@ -49,7 +49,7 @@ public class InputDao {
 			  + "creationDate TIMESTAMP NOT NULL, "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
 			  + "driverId VARCHAR(32) NOT NULL, "
-			  + "inputCollectorId VARCHAR(32) NOT NULL, "
+			  + "inputDefinitionId VARCHAR(32) NOT NULL, "
 			  + "type VARCHAR(32) NOT NULL, "
 			  + "name VARCHAR(32) NOT NULL, "
 			  + "description VARCHAR(512) NOT NULL, "
@@ -77,10 +77,10 @@ public class InputDao {
 			switch(inputTo.getType()) {
 				case ApiPushInputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, inputCollectorId, type, name, description) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputCollectorId, :type, :name, :description)")
+						+ " (creationDate, lastModificationDate, driverId, inputDefinitionId, type, name, description) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputDefinitionId, :type, :name, :description)")
 						.bind("driverId", inputTo.getDriverId())
-						.bind("inputCollectorId", inputTo.getInputCollectorId())
+						.bind("inputDefinitionId", inputTo.getInputDefinitionId())
 						.bind("type", ApiPushInputTo.TYPE)
 						.bind("name", inputTo.getName())
 						.bind("description", inputTo.getDescription())
@@ -89,10 +89,10 @@ public class InputDao {
 					break;
 				case ApiPullInputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, inputCollectorId, type, name, description, frequency, url, method) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputCollectorId, :type, :name, :description, :frequency, :url, :method)")
+						+ " (creationDate, lastModificationDate, driverId, inputDefinitionId, type, name, description, frequency, url, method) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputDefinitionId, :type, :name, :description, :frequency, :url, :method)")
 						.bind("driverId", inputTo.getDriverId())
-						.bind("inputCollectorId", inputTo.getInputCollectorId())
+						.bind("inputDefinitionId", inputTo.getInputDefinitionId())
 						.bind("type", ApiPullInputTo.TYPE)
 						.bind("name", inputTo.getName())
 						.bind("description", inputTo.getDescription())
@@ -107,10 +107,10 @@ public class InputDao {
 					break;
 				case FilesystemInputTo.TYPE:
 					id = h.createStatement("INSERT INTO " + TABLE_NAME
-						+ " (creationDate, lastModificationDate, driverId, inputCollectorId, type, name, description, folder, regex, deleteAfterRead) "
-						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputCollectorId, :type, :name, :description, :folder, :regex, :deleteAfterRead)")
+						+ " (creationDate, lastModificationDate, driverId, inputDefinitionId, type, name, description, folder, regex, deleteAfterRead) "
+						+ "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :driverId, :inputDefinitionId, :type, :name, :description, :folder, :regex, :deleteAfterRead)")
 						.bind("driverId", inputTo.getDriverId())
-						.bind("inputCollectorId", inputTo.getInputCollectorId())
+						.bind("inputDefinitionId", inputTo.getInputDefinitionId())
 						.bind("type", FilesystemInputTo.TYPE)
 						.bind("name", inputTo.getName())
 						.bind("description", inputTo.getDescription())
@@ -241,7 +241,7 @@ public class InputDao {
 				to.setName((String)row.get("name"));
 				to.setDescription((String)row.get("description"));
 				to.setDriverId((String)row.get("driverId"));
-				to.setInputCollectorId((String)row.get("inputCollectorId"));
+				to.setInputDefinitionId((String)row.get("inputDefinitionId"));
 				to.setCreationDate(new DateTime(row.get("creationDate"), DateTimeZone.UTC));
 				to.setLastModificationDate(new DateTime(row.get("lastModificationDate"), DateTimeZone.UTC));
 			}

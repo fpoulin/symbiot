@@ -24,57 +24,22 @@
 package la.alsocan.symbiot.api.to.drivers;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
 
 /**
- *
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class ApiPullCollectorTo extends InputCollectorTo {
+public class PollingOutputDefinitionTo extends OutputDefinitionTo {
 	
-	public static final String TYPE = "apiPullCollector";
-	
-	@JsonProperty
-	private Integer frequency;
+	public static final String TYPE = "pollingOutputDefinition";
 	
 	@JsonProperty
-	private String url;
-	
-	@JsonProperty
-	private String method;
-	
-	@JsonProperty
-	private Map<String, String> headers;
+	private Integer ttl;
 
-	public Integer getFrequency() {
-		return frequency;
+	public Integer getTtl() {
+		return ttl;
 	}
 
-	public void setFrequency(Integer frequency) {
-		this.frequency = frequency;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
-	}
-
-	public Map<String, String> getHeaders() {
-		return headers;
-	}
-
-	public void setHeaders(Map<String, String> headers) {
-		this.headers = headers;
+	public void setTtl(Integer ttl) {
+		this.ttl = ttl;
 	}
 }
