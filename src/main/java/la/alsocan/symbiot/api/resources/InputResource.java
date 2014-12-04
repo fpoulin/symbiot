@@ -36,7 +36,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import la.alsocan.symbiot.access.DriverDao;
 import la.alsocan.symbiot.access.InputDao;
+import la.alsocan.symbiot.access.StreamDao;
+import la.alsocan.symbiot.api.to.ErrorResponseTo;
+import la.alsocan.symbiot.api.to.drivers.DriverTo;
 import la.alsocan.symbiot.api.to.inputs.InputTo;
 
 /**
@@ -45,19 +49,35 @@ import la.alsocan.symbiot.api.to.inputs.InputTo;
 @Path("/inputs")
 public class InputResource {
 
+	private final DriverDao driverDao;
 	private final InputDao inputDao;
+	private final StreamDao streamDao;
 
-	public InputResource(InputDao inputDao) {
+	public InputResource(DriverDao driverDao, InputDao inputDao, StreamDao streamDao) {
+		this.driverDao = driverDao;
 		this.inputDao = inputDao;
+		this.streamDao = streamDao;
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(@Context UriInfo info, InputTo inputTo) {
 		
-		// FIXME: make sure that the driver and input exist
-		// FIXME: validate input
+		// make sure driver and input definition exist
+		DriverTo driver = driverDao.findById(inputTo.getDriverId());
+		if (driver == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find driver '" 
+						  + inputTo.getDriverId() + "'")).build();
+		}
+		if (driver.getInputDefinition(inputTo.getInputDefinitionId()) == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find input definition '" 
+						  + inputTo.getInputDefinitionId() + "' for driver '" 
+						  + inputTo.getDriverId()+"'")).build();
+		}
 		
+		// insert new input
 		int id = inputDao.insert(inputTo);
 		
 		// build response
@@ -112,8 +132,12 @@ public class InputResource {
 			return Response.status(404)	.build();
 		}
 		
-		// FIXME: make sure that the input is not currently used by a stream
-
+		int count = streamDao.countByInput(inputId);
+		if (count > 0) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("The input is currently used in streams"))
+				.build();
+		}
 		inputDao.delete(inputId);
 		return Response.noContent().build();
 	}

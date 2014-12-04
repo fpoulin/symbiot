@@ -36,7 +36,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import la.alsocan.symbiot.access.DriverDao;
 import la.alsocan.symbiot.access.OutputDao;
+import la.alsocan.symbiot.access.StreamDao;
+import la.alsocan.symbiot.api.to.ErrorResponseTo;
+import la.alsocan.symbiot.api.to.drivers.DriverTo;
+import la.alsocan.symbiot.api.to.drivers.OutputDefinitionTo;
 import la.alsocan.symbiot.api.to.outputs.OutputTo;
 
 /**
@@ -45,19 +50,35 @@ import la.alsocan.symbiot.api.to.outputs.OutputTo;
 @Path("/outputs")
 public class OutputResource {
 
+	private final DriverDao driverDao;
 	private final OutputDao outputDao;
+	private final StreamDao streamDao;
 
-	public OutputResource(OutputDao outputDao) {
+	public OutputResource(DriverDao driverDao, OutputDao outputDao, StreamDao streamDao) {
+		this.driverDao = driverDao;
 		this.outputDao = outputDao;
+		this.streamDao = streamDao;
 	}
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(@Context UriInfo info, OutputTo outputTo) {
 		
-		// FIXME: make sure that the driver and input exist
-		// FIXME: validate input
+		// make sure driver and input definition exist
+		DriverTo driver = driverDao.findById(outputTo.getDriverId());
+		if (driver == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find driver '" 
+						  + outputTo.getDriverId() + "'")).build();
+		}
+		if (driver.getOutputDefinition(outputTo.getOutputDefinitionId()) == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find output definition '" 
+						  + outputTo.getOutputDefinitionId() + "' for driver '" 
+						  + outputTo.getDriverId()+"'")).build();
+		}
 		
+		// insert output
 		int id = outputDao.insert(outputTo);
 		
 		// build response
@@ -96,8 +117,6 @@ public class OutputResource {
 		if (outputTo == null) {
 			return Response.status(404)	.build();
 		}
-
-		// FIXME: make sure that only the configuration is updated (not type, driver, etc.)
 		
 		outputDao.update(outputId, newTo);
 		return Response.noContent().build();
@@ -112,8 +131,12 @@ public class OutputResource {
 			return Response.status(404)	.build();
 		}
 		
-		// FIXME: make sure that the output is not currently used by a stream
-
+		int count = streamDao.countByInput(outputId);
+		if (count > 0) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("The output is currently used in streams"))
+				.build();
+		}
 		outputDao.delete(outputId);
 		return Response.noContent().build();
 	}

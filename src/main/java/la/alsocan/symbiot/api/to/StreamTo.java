@@ -44,13 +44,13 @@ public class StreamTo {
 	private DateTime lastModificationDate;
 	
 	@JsonProperty
-	private int sourceSchemaId;
+	private int inputId;
 	
 	@JsonProperty
-	private int targetSchemaId;
+	private int outputId;
 	
 	@JsonProperty
-	private List<BindingTo> bindings;
+	private final List<BindingTo> bindings;
 	
 	@JsonProperty
 	private NextBindingTo nextToBind;
@@ -62,23 +62,13 @@ public class StreamTo {
 	private int remainingBindings;
 	
 	@JsonProperty
-	private List<Link> links;
+	private final List<Link> links;
 	
 	public StreamTo() {
 		this.links = new LinkedList<>();
 		this.bindings = new LinkedList<>();
 	}
 
-	public StreamTo(int id, DateTime creationDate, DateTime lastModificationDate, int sourceSchemaId, int targetSchemaId, int totalBindings) {
-		this();
-		this.id = id;
-		this.creationDate = creationDate;
-		this.lastModificationDate = lastModificationDate;
-		this.sourceSchemaId = sourceSchemaId;
-		this.targetSchemaId = targetSchemaId;
-		this.totalBindings = totalBindings;
-	}
-	
 	public StreamTo addLink(Link link) {
 		this.links.add(link);
 		return this;
@@ -88,7 +78,7 @@ public class StreamTo {
 		this.bindings.add(binding);
 		return this;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -113,20 +103,20 @@ public class StreamTo {
 		this.lastModificationDate = lastModificationDate;
 	}
 
-	public int getSourceSchemaId() {
-		return sourceSchemaId;
+	public int getInputId() {
+		return inputId;
 	}
 
-	public void setSourceSchemaId(int sourceSchemaId) {
-		this.sourceSchemaId = sourceSchemaId;
+	public void setInputId(int inputId) {
+		this.inputId = inputId;
 	}
 
-	public int getTargetSchemaId() {
-		return targetSchemaId;
+	public int getOutputId() {
+		return outputId;
 	}
 
-	public void setTargetSchemaId(int targetSchemaId) {
-		this.targetSchemaId = targetSchemaId;
+	public void setOutputId(int outputId) {
+		this.outputId = outputId;
 	}
 
 	public NextBindingTo getNextToBind() {

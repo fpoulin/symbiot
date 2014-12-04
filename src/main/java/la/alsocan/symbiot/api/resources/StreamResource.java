@@ -24,6 +24,7 @@
 package la.alsocan.symbiot.api.resources;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -59,10 +60,15 @@ import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringHandlebarsBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
 import la.alsocan.symbiot.core.streams.Stream;
-import la.alsocan.symbiot.core.streams.StreamBuilder;
 import la.alsocan.symbiot.access.BindingDao;
-import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.DriverDao;
+import la.alsocan.symbiot.access.InputDao;
+import la.alsocan.symbiot.access.OutputDao;
 import la.alsocan.symbiot.access.StreamDao;
+import la.alsocan.symbiot.api.to.ErrorResponseTo;
+import la.alsocan.symbiot.api.to.inputs.InputTo;
+import la.alsocan.symbiot.api.to.outputs.OutputTo;
+import la.alsocan.symbiot.core.streams.StreamBuilder;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -71,16 +77,16 @@ import la.alsocan.symbiot.access.StreamDao;
 public class StreamResource {
 	
 	private final BindingDao bindingDao;
-	private final SchemaDao schemaDao;
+	private final DriverDao driverDao;
+	private final InputDao inputDao;
+	private final OutputDao outputDao;
 	private final StreamDao streamDao;
 
-	public StreamResource(
-			  BindingDao bindingDao,
-			  SchemaDao schemaDao,
-			  StreamDao streamDao) {
-		
+	public StreamResource(BindingDao bindingDao, DriverDao driverDao, InputDao inputDao, OutputDao outputDao, StreamDao streamDao) {
 		this.bindingDao = bindingDao;
-		this.schemaDao = schemaDao;
+		this.driverDao = driverDao;
+		this.inputDao = inputDao;
+		this.outputDao = outputDao;
 		this.streamDao = streamDao;
 	}
 	
@@ -88,9 +94,21 @@ public class StreamResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response post(@Context UriInfo info, StreamTo to) {
 		
+		InputTo inputTo = inputDao.findById(to.getInputId());
+		if (inputTo == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find input '"+to.getInputId()+"'"))
+				.build();
+		}
+		OutputTo outputTo = outputDao.findById(to.getOutputId());
+		if (outputTo == null) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Could not find output '"+to.getOutputId()+"'"))
+				.build();
+		}
+		
 		// count total bindings to be defined
-		List<BindingTo> bindings = bindingDao.findAll(to.getId());
-		Stream s = StreamBuilder.build(to, schemaDao, bindings);
+		Stream s = StreamBuilder.build(to, driverDao, inputDao, outputDao, Collections.EMPTY_LIST);
 		Iterator<SchemaNode> it = s.getT().toBind();
 		int count = 0;
 		while(it.hasNext()) {
@@ -99,7 +117,7 @@ public class StreamResource {
 		}
 		
 		// store stream
-		int id = streamDao.insert(to.getSourceSchemaId(), to.getTargetSchemaId(), count);
+		int id = streamDao.insert(to.getInputId(), to.getOutputId(), count);
 		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
@@ -111,10 +129,18 @@ public class StreamResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getAll(@Context UriInfo info, @QueryParam(value = "schemaId") Integer schemaId) {
+	public Response getAll(
+			  @Context UriInfo info, 
+			  @QueryParam(value = "inputId") Integer inputId,
+			  @QueryParam(value = "outputId") Integer outputId) {
+		
 		List<StreamTo> tos;
-		if (schemaId != null) {
-			tos = streamDao.findBySchema(schemaId);
+		if (inputId != null && outputId != null) {
+			tos = streamDao.findByInputAndOutput(inputId, outputId);
+		} else if (inputId != null) {
+			tos = streamDao.findByInput(inputId);
+		} else if (outputId != null) {
+			tos = streamDao.findByOutput(outputId);
 		} else {
 			tos = streamDao.findAll();
 		}
@@ -152,7 +178,7 @@ public class StreamResource {
 	private StreamTo resolveTo(UriInfo info, StreamTo to) {
 
 		List<BindingTo> bindings = bindingDao.findAll(to.getId());
-		Stream s = StreamBuilder.build(to, schemaDao, bindings);
+		Stream s = StreamBuilder.build(to, driverDao, inputDao, outputDao, bindings);
 		
 		// add current binding info
 		bindings.stream().forEach((binding) -> {
@@ -190,17 +216,17 @@ public class StreamResource {
 			.path(this.getClass(), "get")
 			.build(to.getId())
 			.toString()))
-		.addLink(new Link("sourceSchema",
+		.addLink(new Link("input",
 			info.getBaseUriBuilder()
-			.path(SchemaResource.class)
-			.path(SchemaResource.class, "get")
-			.build(to.getSourceSchemaId())
+			.path(InputResource.class)
+			.path(InputResource.class, "get")
+			.build(to.getInputId())
 			.toString()))
-		.addLink(new Link("targetSchema",
+		.addLink(new Link("output",
 			info.getBaseUriBuilder()
-			.path(SchemaResource.class)
-			.path(SchemaResource.class, "get")
-			.build(to.getTargetSchemaId())
+			.path(OutputResource.class)
+			.path(OutputResource.class, "get")
+			.build(to.getOutputId())
 			.toString()));
 		if (to.getRemainingBindings() > 0) {
 			to.addLink(new Link("nextToBind",
