@@ -39,15 +39,15 @@ public class StreamMapper implements ResultSetMapper<StreamTo> {
 	@Override
 	public StreamTo map(int index, ResultSet r, StatementContext ctx) throws SQLException {
 		
-		// parse dates
-		DateTime dtc = new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC);
-		DateTime dtm = new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC);
-		
 		// build to
-		return new StreamTo(
-			r.getInt("id"), dtc, dtm, 
-			r.getInt("sourceSchemaId"), 
-			r.getInt("targetSchemaId"),
-			r.getInt("totalBindings"));
+		StreamTo to = new StreamTo();
+		to.setId(r.getInt("id"));
+		to.setCreationDate(new DateTime(r.getTimestamp("creationDate"), DateTimeZone.UTC));
+		to.setLastModificationDate(new DateTime(r.getTimestamp("lastModificationDate"), DateTimeZone.UTC));
+		to.setInputId(r.getInt("inputId"));
+		to.setOutputId(r.getInt("outputId"));
+		to.setTotalBindings(r.getInt("totalBindings"));
+		
+		return to;
 	}
 }

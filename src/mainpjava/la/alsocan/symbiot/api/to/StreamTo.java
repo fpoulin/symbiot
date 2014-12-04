@@ -23,14 +23,16 @@
  */
 package la.alsocan.symbiot.api.to;
 
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.LinkedList;
+import java.util.List;
 import org.joda.time.DateTime;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
  */
-public class SchemaTo {
+public class StreamTo {
 
 	@JsonProperty
 	private int id;
@@ -42,18 +44,41 @@ public class SchemaTo {
 	private DateTime lastModificationDate;
 	
 	@JsonProperty
-	private JsonNode schemaNode;
-
-	public SchemaTo() {
+	private int inputId;
+	
+	@JsonProperty
+	private int outputId;
+	
+	@JsonProperty
+	private final List<BindingTo> bindings;
+	
+	@JsonProperty
+	private NextBindingTo nextToBind;
+	
+	@JsonProperty
+	private int totalBindings;
+	
+	@JsonProperty
+	private int remainingBindings;
+	
+	@JsonProperty
+	private final List<Link> links;
+	
+	public StreamTo() {
+		this.links = new LinkedList<>();
+		this.bindings = new LinkedList<>();
 	}
 
-	public SchemaTo(int id, DateTime creationDate, DateTime lastModificationDate, JsonNode schemaNode) {
-		this.id = id;
-		this.creationDate = creationDate;
-		this.lastModificationDate = lastModificationDate;
-		this.schemaNode = schemaNode;
+	public StreamTo addLink(Link link) {
+		this.links.add(link);
+		return this;
 	}
 	
+	public StreamTo addBinding(BindingTo binding) {
+		this.bindings.add(binding);
+		return this;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -78,11 +103,43 @@ public class SchemaTo {
 		this.lastModificationDate = lastModificationDate;
 	}
 
-	public JsonNode getSchemaNode() {
-		return schemaNode;
+	public int getInputId() {
+		return inputId;
 	}
 
-	public void setSchemaNode(JsonNode schemaNode) {
-		this.schemaNode = schemaNode;
+	public void setInputId(int inputId) {
+		this.inputId = inputId;
+	}
+
+	public int getOutputId() {
+		return outputId;
+	}
+
+	public void setOutputId(int outputId) {
+		this.outputId = outputId;
+	}
+
+	public NextBindingTo getNextToBind() {
+		return nextToBind;
+	}
+
+	public void setNextToBind(NextBindingTo nextToBind) {
+		this.nextToBind = nextToBind;
+	}
+
+	public int getTotalBindings() {
+		return totalBindings;
+	}
+
+	public void setTotalBindings(int totalBindings) {
+		this.totalBindings = totalBindings;
+	}
+
+	public int getRemainingBindings() {
+		return remainingBindings;
+	}
+
+	public void setRemainingBindings(int remainingBindings) {
+		this.remainingBindings = remainingBindings;
 	}
 }

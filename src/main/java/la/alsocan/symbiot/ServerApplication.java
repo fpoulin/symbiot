@@ -34,14 +34,12 @@ import la.alsocan.symbiot.access.BindingDao;
 import la.alsocan.symbiot.access.DriverDao;
 import la.alsocan.symbiot.access.InputDao;
 import la.alsocan.symbiot.access.OutputDao;
-import la.alsocan.symbiot.access.SchemaDao;
 import la.alsocan.symbiot.access.StreamDao;
 import la.alsocan.symbiot.api.resources.BindingResource;
 import la.alsocan.symbiot.api.resources.DriverResource;
 import la.alsocan.symbiot.api.resources.InputResource;
 import la.alsocan.symbiot.api.resources.OutputResource;
 import la.alsocan.symbiot.api.resources.PingResource;
-import la.alsocan.symbiot.api.resources.SchemaResource;
 import la.alsocan.symbiot.api.resources.StreamResource;
 import org.skife.jdbi.v2.DBI;
 
@@ -76,7 +74,6 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		// init JDBI
 		final DBIFactory factory = new DBIFactory();
 		final DBI jdbi = factory.build(env, conf.getDataSourceFactory(), "derby");
-		final SchemaDao schemaDao = jdbi.onDemand(SchemaDao.class);
 		final StreamDao streamDao = jdbi.onDemand(StreamDao.class);
 		final BindingDao bindingDao = new BindingDao(jdbi);
 		final DriverDao driverDao = new DriverDao(env.getObjectMapper());
@@ -85,11 +82,10 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		
 		// register resources
 		env.jersey().register(new PingResource(conf.getEcho()));
-		env.jersey().register(new SchemaResource(schemaDao, streamDao));
-		env.jersey().register(new StreamResource(bindingDao, schemaDao, streamDao));
-		env.jersey().register(new BindingResource(bindingDao, schemaDao, streamDao));
+		env.jersey().register(new StreamResource(bindingDao, driverDao, inputDao, outputDao, streamDao));
+		env.jersey().register(new BindingResource(bindingDao, driverDao, inputDao, outputDao, streamDao));
 		env.jersey().register(new DriverResource(driverDao));
-		env.jersey().register(new InputResource(inputDao));
-		env.jersey().register(new OutputResource(outputDao));
+		env.jersey().register(new InputResource(driverDao, inputDao, streamDao));
+		env.jersey().register(new OutputResource(driverDao, outputDao, streamDao));
 	}
 }

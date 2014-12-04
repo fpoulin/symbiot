@@ -33,7 +33,6 @@ import la.alsocan.symbiot.ServerConfiguration;
 import la.alsocan.symbiot.access.BindingDao;
 import la.alsocan.symbiot.access.InputDao;
 import la.alsocan.symbiot.access.OutputDao;
-import la.alsocan.symbiot.access.SchemaDao;
 import la.alsocan.symbiot.access.StreamDao;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
@@ -70,14 +69,14 @@ public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfigura
 		// create new database (with DDL)
 		DriverManager.registerDriver((Driver)Class.forName(EXPECTED_DRIVER).newInstance());
 		try (Connection c = DriverManager.getConnection(EXPECTED_URL
-			+ ";create=true;user=" + configuration.getDataSourceFactory().getUser()
+			+ ";create=true"
+			+ ";user=" + configuration.getDataSourceFactory().getUser()
 			+ ";password=" + configuration.getDataSourceFactory().getPassword())) {
 			
-			c.createStatement().executeUpdate(SchemaDao.DDL);
-			c.createStatement().executeUpdate(StreamDao.DDL);
-			c.createStatement().executeUpdate(BindingDao.DDL);
 			c.createStatement().executeUpdate(InputDao.DDL);
 			c.createStatement().executeUpdate(OutputDao.DDL);
+			c.createStatement().executeUpdate(StreamDao.DDL);
+			c.createStatement().executeUpdate(BindingDao.DDL);
 		}
 	}
 }

@@ -43,20 +43,20 @@ public interface StreamDao {
 			  + "id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), "
 			  + "creationDate TIMESTAMP NOT NULL, "
 			  + "lastModificationDate TIMESTAMP NOT NULL, "
-			  + "sourceSchemaId INTEGER NOT NULL, "
-			  + "targetSchemaId INTEGER NOT NULL, "
+			  + "inputId INTEGER NOT NULL, "
+			  + "outputId INTEGER NOT NULL, "
 			  + "totalBindings INTEGER NOT NULL, "
 			  + "CONSTRAINT streams_key PRIMARY KEY (id),"
-			  + "CONSTRAINT source_fk FOREIGN KEY (sourceSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT,"
-			  + "CONSTRAINT target_fk FOREIGN KEY (targetSchemaId) REFERENCES "+SchemaDao.TABLE_NAME+" (id) ON DELETE RESTRICT)";
+			  + "CONSTRAINT input_fk FOREIGN KEY (inputId) REFERENCES "+InputDao.TABLE_NAME+" (id) ON DELETE RESTRICT,"
+			  + "CONSTRAINT output_fk FOREIGN KEY (outputId) REFERENCES "+OutputDao.TABLE_NAME+" (id) ON DELETE RESTRICT)";
 	
 	@SqlUpdate("INSERT INTO " + TABLE_NAME
-			  + " (creationDate, lastModificationDate, sourceSchemaId, targetSchemaId, totalBindings) "
-			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :sourceSchemaId, :targetSchemaId, :totalBindings)")
+			  + " (creationDate, lastModificationDate, inputId, outputId, totalBindings) "
+			  + "VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, :inputId, :outputId, :totalBindings)")
 	@GetGeneratedKeys
 	int insert(
-			  @Bind("sourceSchemaId") int sourceSchemaId, 
-			  @Bind("targetSchemaId") int targetSchemaId,
+			  @Bind("inputId") int inputId, 
+			  @Bind("outputId") int outputId,
 			  @Bind("totalBindings") int totalBindings);
 	
 	@SqlQuery("SELECT * FROM " + TABLE_NAME)
@@ -65,11 +65,20 @@ public interface StreamDao {
 	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE id = :id")
 	StreamTo findById(@Bind("id") int id);
 	
-	@SqlQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
-	int countBySchema(@Bind("schemaId") int schemaId);
+	@SqlQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE inputId = :inputId")
+	int countByInput(@Bind("inputId") int inputId);
 	
-	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE sourceSchemaId = :schemaId OR targetSchemaId = :schemaId")
-	List<StreamTo> findBySchema(@Bind("schemaId") int schemaId);
+	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE inputId = :inputId")
+	List<StreamTo> findByInput(@Bind("inputId") int inputId);
+	
+	@SqlQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE outputId = :outputId")
+	int countByOutput(@Bind("outputId") int outputId);
+	
+	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE outputId = :outputId")
+	List<StreamTo> findByOutput(@Bind("outputId") int outputId);
+	
+	@SqlQuery("SELECT * FROM " + TABLE_NAME + " WHERE inputId = :inputId AND outputId = :outputId")
+	List<StreamTo> findByInputAndOutput(@Bind("inputId") int inputId, @Bind("outputId") int outputId);
 	
 	@SqlUpdate("DELETE FROM " + TABLE_NAME + " WHERE id = :id")
 	void delete(@Bind("id") int id);

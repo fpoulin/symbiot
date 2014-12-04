@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 	@JsonSubTypes.Type(value = ApiPushInputDefinitionTo.class, name = ApiPushInputDefinitionTo.TYPE),
 	@JsonSubTypes.Type(value = ApiPullInputDefinitionTo.class, name = ApiPullInputDefinitionTo.TYPE),
 	@JsonSubTypes.Type(value = FilesystemInputDefinitionTo.class, name = FilesystemInputDefinitionTo.TYPE)})
-public abstract class InputDefinitionTo {
+public abstract class InputDefinitionTo implements Comparable<InputDefinitionTo> {
 	
 	@JsonProperty
 	private String id;
@@ -83,5 +83,10 @@ public abstract class InputDefinitionTo {
 
 	public void setSchemaNode(JsonNode schemaNode) {
 		this.schemaNode = schemaNode;
+	}
+
+	@Override
+	public int compareTo(InputDefinitionTo o) {
+		return id.compareTo(o.id);
 	}
 }

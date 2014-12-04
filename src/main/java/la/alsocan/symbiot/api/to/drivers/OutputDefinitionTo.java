@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 	@JsonSubTypes.Type(value = WebhookOutputDefinitionTo.class, name = WebhookOutputDefinitionTo.TYPE),
 	@JsonSubTypes.Type(value = PollingOutputDefinitionTo.class, name = PollingOutputDefinitionTo.TYPE),
 	@JsonSubTypes.Type(value = FilesystemOutputDefinitionTo.class, name = FilesystemOutputDefinitionTo.TYPE)})
-public abstract class OutputDefinitionTo {
+public abstract class OutputDefinitionTo implements Comparable<OutputDefinitionTo> {
 	
 	@JsonProperty
 	private String id;
@@ -83,5 +83,10 @@ public abstract class OutputDefinitionTo {
 
 	public void setSchemaNode(JsonNode schemaNode) {
 		this.schemaNode = schemaNode;
+	}
+	
+	@Override
+	public int compareTo(OutputDefinitionTo o) {
+		return id.compareTo(o.id);
 	}
 }

@@ -44,10 +44,12 @@ import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
 import la.alsocan.symbiot.api.to.StreamTo;
 import la.alsocan.symbiot.core.streams.Stream;
-import la.alsocan.symbiot.core.streams.StreamBuilder;
 import la.alsocan.symbiot.access.BindingDao;
-import la.alsocan.symbiot.access.SchemaDao;
+import la.alsocan.symbiot.access.DriverDao;
+import la.alsocan.symbiot.access.InputDao;
+import la.alsocan.symbiot.access.OutputDao;
 import la.alsocan.symbiot.access.StreamDao;
+import la.alsocan.symbiot.core.streams.StreamBuilder;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -56,16 +58,16 @@ import la.alsocan.symbiot.access.StreamDao;
 public class BindingResource {
 	
 	private final BindingDao bindingDao;
-	private final SchemaDao schemaDao;
+	private final DriverDao driverDao;
+	private final InputDao inputDao;
+	private final OutputDao outputDao;
 	private final StreamDao streamDao;
 
-	public BindingResource(
-			  BindingDao bindingDao,
-			  SchemaDao schemaDao,
-			  StreamDao streamDao) {
-		
+	public BindingResource(BindingDao bindingDao, DriverDao driverDao, InputDao inputDao, OutputDao outputDao, StreamDao streamDao) {
 		this.bindingDao = bindingDao;
-		this.schemaDao = schemaDao;
+		this.driverDao = driverDao;
+		this.inputDao = inputDao;
+		this.outputDao = outputDao;
 		this.streamDao = streamDao;
 	}
 	
@@ -90,7 +92,7 @@ public class BindingResource {
 			return Response.status(404).build();
 		}
 		List<BindingTo> bindings = bindingDao.findAll(streamId);
-		Stream s = StreamBuilder.build(streamTo, schemaDao, bindings);
+		Stream s = StreamBuilder.build(streamTo, driverDao, inputDao, outputDao, bindings);
 		
 		// check target node
 		SchemaNode targetNode = s.getT().getTarget().at(to.getTargetNode());
@@ -113,7 +115,7 @@ public class BindingResource {
 		}
 		
 		// store binding
-		int id = bindingDao.insert(to, streamTo.getId());
+		int id = bindingDao.insert(to, streamId);
 		
 		// build response
 		URI absoluteUri = info.getBaseUriBuilder()
@@ -174,7 +176,7 @@ public class BindingResource {
 			return Response.status(404).build();
 		}
 		List<BindingTo> bindings = bindingDao.findAll(streamId);
-		Stream s = StreamBuilder.build(streamTo, schemaDao, bindings);
+		Stream s = StreamBuilder.build(streamTo, driverDao, inputDao, outputDao, bindings);
 		
 		// lookup target node (should not fail, unless the target schema got updated)
 		SchemaNode targetNode = s.getT().getTarget().at(current.getTargetNode());

@@ -23,8 +23,11 @@
  */
 package la.alsocan.symbiot.api.to.drivers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -44,11 +47,39 @@ public class DriverTo {
 	private String version;
 	
 	@JsonProperty
-	private List<InputDefinitionTo> inputDefinitions;
+	private Set<InputDefinitionTo> inputDefinitions;
 	
 	@JsonProperty
-	private List<OutputDefinitionTo> outputDefinitions;
+	private Set<OutputDefinitionTo> outputDefinitions;
+	
+	@JsonIgnore
+	private Map<String, InputDefinitionTo> inputDefinitionsIndex;
+	
+	@JsonIgnore
+	private Map<String, OutputDefinitionTo> outputDefinitionsIndex;
 
+	public InputDefinitionTo getInputDefinition(String inputId) {
+	
+		if (inputDefinitionsIndex == null) {
+			inputDefinitionsIndex = new TreeMap<>();
+			inputDefinitions.stream().forEach((to) -> {
+				inputDefinitionsIndex.put(to.getId(), to);
+			});
+		}
+		return inputDefinitionsIndex.get(inputId);
+	}
+	
+	public OutputDefinitionTo getOutputDefinition(String outputId) {
+	
+		if (outputDefinitionsIndex == null) {
+			outputDefinitionsIndex = new TreeMap<>();
+			outputDefinitions.stream().forEach((to) -> {
+				outputDefinitionsIndex.put(to.getId(), to);
+			});
+		}
+		return outputDefinitionsIndex.get(outputId);
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -81,19 +112,19 @@ public class DriverTo {
 		this.version = version;
 	}
 
-	public List<InputDefinitionTo> getInputDefinitions() {
+	public Set<InputDefinitionTo> getInputDefinitions() {
 		return inputDefinitions;
 	}
 
-	public void setInputDefinitions(List<InputDefinitionTo> inputDefinitions) {
+	public void setInputDefinitions(Set<InputDefinitionTo> inputDefinitions) {
 		this.inputDefinitions = inputDefinitions;
 	}
 
-	public List<OutputDefinitionTo> getOutputDefinitions() {
+	public Set<OutputDefinitionTo> getOutputDefinitions() {
 		return outputDefinitions;
 	}
 
-	public void setOutputDefinitions(List<OutputDefinitionTo> outputDefinitions) {
+	public void setOutputDefinitions(Set<OutputDefinitionTo> outputDefinitions) {
 		this.outputDefinitions = outputDefinitions;
 	}
 }
