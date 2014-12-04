@@ -2,6 +2,8 @@
 
 The open Internet of Things service that runs on your machine.
 
+Check the [online documentation](http://coding.alsocan.la) for more information.
+
 # Try it
 
 * Checkout out the sources
@@ -16,7 +18,7 @@ You can try it (from browser also can):
 * `curl http://localhost:8080/ping`
 * `curl http://localhost:8080/ping?echo=alsocan`
 
-...and be amazed by the uselessness of this API at this stage.
+Check the [Reference API documentation](http://coding.alsocan.la/api/reference/).
 
 # Credits
 

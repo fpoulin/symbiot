@@ -41,7 +41,6 @@ import la.alsocan.symbiot.access.OutputDao;
 import la.alsocan.symbiot.access.StreamDao;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
 import la.alsocan.symbiot.api.to.drivers.DriverTo;
-import la.alsocan.symbiot.api.to.drivers.OutputDefinitionTo;
 import la.alsocan.symbiot.api.to.outputs.OutputTo;
 
 /**
