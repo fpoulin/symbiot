@@ -101,7 +101,7 @@ public class InputResource {
 		
 		InputTo inputTo = inputDao.findById(inputId);
 		if (inputTo == null) {
-			return Response.status(404)	.build();
+			return Response.status(404).build();
 		}
 		return Response.ok(inputTo).build();
 	}
@@ -114,7 +114,7 @@ public class InputResource {
 		
 		InputTo inputTo = inputDao.findById(inputId);
 		if (inputTo == null) {
-			return Response.status(404)	.build();
+			return Response.status(404).build();
 		}
 
 		// FIXME: make sure that only the configuration is updated (not type, driver, etc.)
@@ -129,7 +129,7 @@ public class InputResource {
 		
 		InputTo inputTo = inputDao.findById(inputId);
 		if (inputTo == null) {
-			return Response.status(404)	.build();
+			return Response.status(404).build();
 		}
 		
 		int count = streamDao.countByInput(inputId);

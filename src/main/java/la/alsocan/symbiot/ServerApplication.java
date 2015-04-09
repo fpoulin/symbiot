@@ -41,6 +41,7 @@ import la.alsocan.symbiot.api.resources.InputResource;
 import la.alsocan.symbiot.api.resources.OutputResource;
 import la.alsocan.symbiot.api.resources.PingResource;
 import la.alsocan.symbiot.api.resources.StreamResource;
+import la.alsocan.symbiot.core.StreamLoader;
 import org.skife.jdbi.v2.DBI;
 
 /**
@@ -87,5 +88,8 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		env.jersey().register(new DriverResource(driverDao));
 		env.jersey().register(new InputResource(driverDao, inputDao, streamDao));
 		env.jersey().register(new OutputResource(driverDao, outputDao, streamDao));
+		
+		// upon server startup, load streams
+		env.lifecycle().addServerLifecycleListener(new StreamLoader());
 	}
 }
