@@ -1,7 +1,7 @@
 {
 	"id": "test-driver",
 	"name": "myDriver",
-	"description": "This driver does basically nothing",
+	"description": "This driver ",
 	"version": "0.1.0",
 	"inputDefinitions": [
 		{
@@ -13,11 +13,11 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"hello": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["hello"]
 			}
 		},
 		{
@@ -29,14 +29,14 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"echo": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["echo"]
 			},
 			"frequency": 5,
-			"url": "http://192.168.0.14/toaster_api/status",
+			"url": "http://localhost:8080/ping",
 			"method": "GET",
 			"headers": {
 				"Authorization": "Basic eW91QXJlQ3VyaW91czpnb29kRm9yWW91"
@@ -51,11 +51,11 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"hello": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["hello"]
 			},
 			"folder": "/opt/somewhere",
 			"regex": "*.json",
@@ -77,11 +77,11 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"hello": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["hello"]
 			}
 		},
 		{
@@ -94,11 +94,11 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"hello": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["hello"]
 			}
 		},
 		{
@@ -111,11 +111,11 @@
 				"$schema": "http://json-schema.org/draft-04/schema#",
 				"type": "object",
 				"properties": {
-					"someString": {
+					"hello": {
 						"type": "string"
 					}
 				},
-				"required": ["someString"]
+				"required": ["hello"]
 			}
 		}
 	]
