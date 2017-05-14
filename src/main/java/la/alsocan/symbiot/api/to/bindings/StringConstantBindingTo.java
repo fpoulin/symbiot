@@ -52,7 +52,7 @@ public class StringConstantBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<String> build(Stream s){
 		return new StringConstantBinding(constant);
 	}
 }

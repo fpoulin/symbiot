@@ -52,7 +52,7 @@ public class IntegerConstantBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Integer> build(Stream s){
 		return new IntegerConstantBinding(constant);
 	}
 }

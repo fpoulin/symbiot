@@ -24,7 +24,6 @@
 package la.alsocan.symbiot.api.to.inputs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import static la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo.TYPE;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin

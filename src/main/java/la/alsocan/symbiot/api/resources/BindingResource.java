@@ -105,7 +105,7 @@ public class BindingResource {
 		
 		// build and apply binding
 		try {
-			Binding binding = to.build(s);
+			Binding<?> binding = to.build(s);
 			s.getT().bind(targetNode, binding);
 		} catch (IllegalBindingException ex) {
 			return Response
@@ -189,7 +189,7 @@ public class BindingResource {
 		
 		// build and apply binding
 		try {
-			Binding binding = newTo.build(s);
+			Binding<?> binding = newTo.build(s);
 			s.getT().bind(targetNode, binding);
 		} catch (IllegalBindingException ex) {
 			return Response

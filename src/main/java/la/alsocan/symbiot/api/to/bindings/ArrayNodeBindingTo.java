@@ -23,6 +23,10 @@
  */
 package la.alsocan.symbiot.api.to.bindings;
 
+import java.util.Iterator;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import la.alsocan.jsonshapeshifter.bindings.ArrayNodeBinding;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.symbiot.core.streams.Stream;
@@ -40,7 +44,7 @@ public class ArrayNodeBindingTo extends AbstractNodeBindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s) {
+	public Binding<Iterator<JsonNode>> build(Stream s) {
 		return new ArrayNodeBinding(s.getT().getSource().at(sourceNode));
 	}
 }

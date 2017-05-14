@@ -71,9 +71,10 @@ public class StringHandlebarsBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s) {
+	public Binding<String> build(Stream s) {
 		
 		try {
+			@SuppressWarnings("rawtypes") // TODO make StringHandlebarsBindingproperly typed in json-shapeshifter
 			Map<String, Binding> resolvedParams = new TreeMap<>();
 			for (String param : parameters.keySet()) {
 				resolvedParams.put(param, parameters.get(param).build(s));

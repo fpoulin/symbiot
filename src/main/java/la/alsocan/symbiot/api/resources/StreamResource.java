@@ -108,7 +108,7 @@ public class StreamResource {
 		}
 		
 		// count total bindings to be defined
-		Stream s = StreamBuilder.build(to, driverDao, inputDao, outputDao, Collections.EMPTY_LIST);
+		Stream s = StreamBuilder.build(to, driverDao, inputDao, outputDao, Collections.emptyList());
 		Iterator<SchemaNode> it = s.getT().toBind();
 		int count = 0;
 		while(it.hasNext()) {
@@ -271,6 +271,10 @@ public class StreamResource {
 				types.add(StringNodeBindingTo.TYPE);
 				types.add(StringHandlebarsBindingTo.TYPE);
 				types.add(StringConstantBindingTo.TYPE);
+				break;
+			case NULL:
+			case OBJECT:
+			default:
 				break;
 		}
 		return types;

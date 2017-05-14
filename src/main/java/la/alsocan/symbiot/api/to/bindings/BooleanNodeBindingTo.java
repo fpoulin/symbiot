@@ -40,7 +40,7 @@ public class BooleanNodeBindingTo extends AbstractNodeBindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Boolean> build(Stream s){
 		return new BooleanNodeBinding(s.getT().getSource().at(sourceNode));
 	}
 }

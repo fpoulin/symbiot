@@ -52,7 +52,7 @@ public class NumberConstantBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Double> build(Stream s){
 		return new NumberConstantBinding(constant);
 	}
 }

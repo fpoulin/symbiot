@@ -52,7 +52,7 @@ public class BooleanConstantBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Boolean> build(Stream s){
 		return new BooleanConstantBinding(constant);
 	}
 }

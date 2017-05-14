@@ -23,7 +23,11 @@
  */
 package la.alsocan.symbiot.api.to.bindings;
 
+import java.util.Iterator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import la.alsocan.jsonshapeshifter.bindings.ArrayConstantBinding;
 import la.alsocan.jsonshapeshifter.bindings.Binding;
 import la.alsocan.symbiot.core.streams.Stream;
@@ -52,7 +56,7 @@ public class ArrayConstantBindingTo extends BindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Iterator<JsonNode>> build(Stream s){
 		return new ArrayConstantBinding(nbIterations);
 	}
 }

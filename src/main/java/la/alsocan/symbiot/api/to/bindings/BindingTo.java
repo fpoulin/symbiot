@@ -73,7 +73,7 @@ public abstract class BindingTo {
 	 * @return A binding
 	 * @throws IllegalBindingException The binding could not be built
 	 */
-	public abstract Binding build(Stream s) throws IllegalBindingException;
+	public abstract Binding<?> build(Stream s) throws IllegalBindingException;
 	
 	public int getId() {
 		return id;

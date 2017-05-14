@@ -40,7 +40,7 @@ public class NumberNodeBindingTo extends AbstractNodeBindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Double> build(Stream s){
 		return new NumberNodeBinding(s.getT().getSource().at(sourceNode));
 	}
 }

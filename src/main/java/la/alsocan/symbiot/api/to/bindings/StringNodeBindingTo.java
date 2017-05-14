@@ -40,7 +40,7 @@ public class StringNodeBindingTo extends AbstractNodeBindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<String> build(Stream s){
 		return new StringNodeBinding(s.getT().getSource().at(sourceNode));
 	}
 }

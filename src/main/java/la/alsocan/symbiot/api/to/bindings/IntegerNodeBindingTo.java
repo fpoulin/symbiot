@@ -40,7 +40,7 @@ public class IntegerNodeBindingTo extends AbstractNodeBindingTo {
 	}
 	
 	@Override
-	public Binding build(Stream s){
+	public Binding<Integer> build(Stream s){
 		return new IntegerNodeBinding(s.getT().getSource().at(sourceNode));
 	}
 }
