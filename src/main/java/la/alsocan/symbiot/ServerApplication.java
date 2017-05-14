@@ -86,7 +86,7 @@ public class ServerApplication extends Application<ServerConfiguration> {
 		env.jersey().register(new StreamResource(bindingDao, driverDao, inputDao, outputDao, streamDao));
 		env.jersey().register(new BindingResource(bindingDao, driverDao, inputDao, outputDao, streamDao));
 		env.jersey().register(new DriverResource(driverDao));
-		env.jersey().register(new InputResource(driverDao, inputDao, streamDao));
+		env.jersey().register(new InputResource(driverDao, inputDao, outputDao, streamDao, bindingDao, env.getObjectMapper()));
 		env.jersey().register(new OutputResource(driverDao, outputDao, streamDao));
 		
 		// upon server startup, load streams

@@ -24,6 +24,8 @@
 package la.alsocan.symbiot.api.resources;
 
 import java.net.URI;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -36,12 +38,26 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import org.eclipse.jetty.util.log.Log;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import la.alsocan.symbiot.access.BindingDao;
 import la.alsocan.symbiot.access.DriverDao;
 import la.alsocan.symbiot.access.InputDao;
+import la.alsocan.symbiot.access.OutputDao;
 import la.alsocan.symbiot.access.StreamDao;
 import la.alsocan.symbiot.api.to.ErrorResponseTo;
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.drivers.DriverTo;
+import la.alsocan.symbiot.api.to.inputs.ApiPushInputTo;
 import la.alsocan.symbiot.api.to.inputs.InputTo;
+import la.alsocan.symbiot.api.to.outputs.OutputTo;
+import la.alsocan.symbiot.core.streams.Stream;
+import la.alsocan.symbiot.core.streams.StreamBuilder;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -51,12 +67,18 @@ public class InputResource {
 
 	private final DriverDao driverDao;
 	private final InputDao inputDao;
+	private final OutputDao outputDao;
 	private final StreamDao streamDao;
+	private final BindingDao bindingDao;
+	private final ObjectMapper om;
 
-	public InputResource(DriverDao driverDao, InputDao inputDao, StreamDao streamDao) {
+	public InputResource(DriverDao driverDao, InputDao inputDao, OutputDao outputDao, StreamDao streamDao, BindingDao bindingDao, ObjectMapper om) {
 		this.driverDao = driverDao;
 		this.inputDao = inputDao;
+		this.outputDao = outputDao;
 		this.streamDao = streamDao;
+		this.bindingDao = bindingDao;
+		this.om = om;
 	}
 	
 	@POST
@@ -93,6 +115,41 @@ public class InputResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAll() {
 		return Response.ok(inputDao.findAll()).build();
+	}
+	
+	@POST
+	@Path(value = "{inputId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response post(@PathParam("inputId") int inputId, JsonNode payload) {
+		
+		InputTo inputTo = inputDao.findById(inputId);
+		if (inputTo == null) {
+			return Response.status(404).build();
+		}
+		
+		if (!inputTo.getType().equals(ApiPushInputTo.TYPE)) {
+			return Response.status(422)
+				.entity(new ErrorResponseTo("Only the API push input type can handle calls'")).build();
+		}
+		
+		this.streamDao.findByInput(inputId).forEach(stream -> {
+			
+			List<BindingTo> bindings = bindingDao.findAll(stream.getId());
+			Stream s = StreamBuilder.build(stream, driverDao, inputDao, outputDao, bindings);
+			JsonNode result = s.getT().apply(payload);
+			
+			OutputTo out = outputDao.findById(stream.getOutputId());
+			
+			Log.getLogger(this.getClass()).info("Playing stream '"+stream.getId()+"'");
+			try {
+				Log.getLogger(this.getClass()).info("Throwing this to output '"+out.getId()+"': \n" + om.writerWithDefaultPrettyPrinter().writeValueAsString(result));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		});
+
+		return Response.noContent().build();
 	}
 	
 	@GET
