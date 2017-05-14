@@ -23,19 +23,21 @@
  */
 package la.alsocan.symbiot.cli;
 
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.setup.Bootstrap;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+
+import org.apache.commons.io.FileUtils;
+
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.setup.Bootstrap;
 import la.alsocan.symbiot.ServerConfiguration;
 import la.alsocan.symbiot.access.BindingDao;
 import la.alsocan.symbiot.access.InputDao;
 import la.alsocan.symbiot.access.OutputDao;
 import la.alsocan.symbiot.access.StreamDao;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.apache.commons.io.FileUtils;
 
 /**
  * @author Florian Poulin - https://github.com/fpoulin
@@ -51,7 +53,7 @@ public class DropCreateDatabaseCommand extends ConfiguredCommand<ServerConfigura
 	}
 	
 	@Override
-	protected void run(Bootstrap bootstrap, Namespace namespace, ServerConfiguration configuration) throws Exception {
+	protected void run(Bootstrap<ServerConfiguration> bootstrap, Namespace namespace, ServerConfiguration configuration) throws Exception {
 		
 		// check that the config uses Derby with the expected name (KISS!)
 		if (!EXPECTED_DRIVER.equals(configuration.getDataSourceFactory().getDriverClass()) 

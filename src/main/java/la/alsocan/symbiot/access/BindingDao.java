@@ -25,10 +25,18 @@ package la.alsocan.symbiot.access;
 
 import java.util.List;
 import java.util.Map;
-import la.alsocan.symbiot.api.to.bindings.BindingTo;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.skife.jdbi.v2.BaseResultSetMapper;
+import org.skife.jdbi.v2.DBI;
+import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.util.IntegerColumnMapper;
+
 import la.alsocan.symbiot.api.to.bindings.AbstractNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.ArrayNodeBindingTo;
+import la.alsocan.symbiot.api.to.bindings.BindingTo;
 import la.alsocan.symbiot.api.to.bindings.BooleanConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.BooleanNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.IntegerConstantBindingTo;
@@ -37,12 +45,6 @@ import la.alsocan.symbiot.api.to.bindings.NumberConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.NumberNodeBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringConstantBindingTo;
 import la.alsocan.symbiot.api.to.bindings.StringNodeBindingTo;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.skife.jdbi.v2.BaseResultSetMapper;
-import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.util.IntegerMapper;
 
 /**
  * Dao for bindings, using a single table inheritance strategy (to keep it <i>simple</i>).
@@ -93,7 +95,7 @@ public class BindingDao {
 						.bind("type", bindingTo.getType())
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("sourceNode", ((AbstractNodeBindingTo)bindingTo).getSourceNode())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case ArrayConstantBindingTo.TYPE:
@@ -104,7 +106,7 @@ public class BindingDao {
 						.bind("type", "arrayConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("arrayConstant", ((ArrayConstantBindingTo)bindingTo).getNbIterations())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case BooleanConstantBindingTo.TYPE:
@@ -115,7 +117,7 @@ public class BindingDao {
 						.bind("type", "booleanConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("booleanConstant", ((BooleanConstantBindingTo)bindingTo).getConstant())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case IntegerConstantBindingTo.TYPE:
@@ -126,7 +128,7 @@ public class BindingDao {
 						.bind("type", "integerConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("integerConstant", ((IntegerConstantBindingTo)bindingTo).getConstant())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case NumberConstantBindingTo.TYPE:
@@ -137,7 +139,7 @@ public class BindingDao {
 						.bind("type", "numberConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("numberConstant", ((NumberConstantBindingTo)bindingTo).getConstant())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case StringConstantBindingTo.TYPE:
@@ -148,7 +150,7 @@ public class BindingDao {
 						.bind("type", "stringConstant")
 						.bind("targetNode", bindingTo.getTargetNode())
 						.bind("stringConstant", ((StringConstantBindingTo)bindingTo).getConstant())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 			}
@@ -182,7 +184,7 @@ public class BindingDao {
 					  + "AND targetNode = :targetNode")
 					  .bind("streamId", streamId)
 					  .bind("targetNode", targetNode)
-					  .map(IntegerMapper.FIRST)
+					  .map(IntegerColumnMapper.PRIMITIVE)
 					  .first();
 		}
 	}

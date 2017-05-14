@@ -25,16 +25,18 @@ package la.alsocan.symbiot.access;
 
 import java.util.List;
 import java.util.Map;
-import la.alsocan.symbiot.api.to.outputs.FilesystemOutputTo;
-import la.alsocan.symbiot.api.to.outputs.OutputTo;
-import la.alsocan.symbiot.api.to.outputs.PollingOutputTo;
-import la.alsocan.symbiot.api.to.outputs.WebhookOutputTo;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.skife.jdbi.v2.BaseResultSetMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
-import org.skife.jdbi.v2.util.IntegerMapper;
+import org.skife.jdbi.v2.util.IntegerColumnMapper;
+
+import la.alsocan.symbiot.api.to.outputs.FilesystemOutputTo;
+import la.alsocan.symbiot.api.to.outputs.OutputTo;
+import la.alsocan.symbiot.api.to.outputs.PollingOutputTo;
+import la.alsocan.symbiot.api.to.outputs.WebhookOutputTo;
 
 /**
  * Dao for outputs, using a single table inheritance strategy (to keep it <i>simple</i>).
@@ -84,7 +86,7 @@ public class OutputDao {
 						.bind("description", outputTo.getDescription())
 						.bind("url", ((WebhookOutputTo)outputTo).getUrl())
 						.bind("method", ((WebhookOutputTo)outputTo).getMethod())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					
 					// FIXME: handle headers here
@@ -100,7 +102,7 @@ public class OutputDao {
 						.bind("name", outputTo.getName())
 						.bind("description", outputTo.getDescription())
 						.bind("ttl", ((PollingOutputTo)outputTo).getTtl())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 				case FilesystemOutputTo.TYPE:
@@ -113,7 +115,7 @@ public class OutputDao {
 						.bind("name", outputTo.getName())
 						.bind("description", outputTo.getDescription())
 						.bind("folder", ((FilesystemOutputTo)outputTo).getFolder())
-						.executeAndReturnGeneratedKeys(IntegerMapper.FIRST)
+						.executeAndReturnGeneratedKeys(IntegerColumnMapper.PRIMITIVE)
 						.first();
 					break;
 			}

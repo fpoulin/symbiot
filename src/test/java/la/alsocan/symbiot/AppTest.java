@@ -1,4 +1,4 @@
-package la.alsocan.jsonshapeshifterserver;
+package la.alsocan.symbiot;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
