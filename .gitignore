@@ -2,3 +2,6 @@ target/
 dependency-reduced-pom.xml
 derby.log
 symbiotDB/
+.classpath
+.project
+.settings/
